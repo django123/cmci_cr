@@ -1,0 +1,55 @@
+# Configuration pour les tests
+
+spring:
+  # H2 en mémoire pour les tests
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  # Flyway désactivé en mode test (ddl-auto create-drop)
+  flyway:
+    enabled: false
+
+  # Redis embedded pour les tests
+  data:
+    redis:
+      host: localhost
+      port: 6370
+
+  # Kafka embedded pour les tests
+  kafka:
+    bootstrap-servers: localhost:9093
+    consumer:
+      auto-offset-reset: earliest
+      group-id: test-group
+
+  # Security désactivée pour les tests
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/test
+
+logging:
+  level:
+    root: INFO
+    com.cmci.cr: DEBUG
+    org.springframework.test: INFO
+    org.testcontainers: INFO
+    org.hibernate.SQL: DEBUG
+
+# Swagger désactivé en test
+springdoc:
+  swagger-ui:
+    enabled: false

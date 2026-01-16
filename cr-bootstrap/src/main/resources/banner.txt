@@ -1,0 +1,13 @@
+
+  ____ __  __  ____ ___    ____ ____
+ / ___|  \/  |/ ___|_ _|  / ___|  _ \
+| |   | |\/| | |    | |  | |   | |_) |
+| |___| |  | | |___ | |  | |___|  _ <
+ \____|_|  |_|\____|___|  \____|_| \_\
+
+CMCI Compte Rendu - Backend API
+Version: ${app.version}
+Spring Boot: ${spring-boot.version}
+Profile: ${spring.profiles.active}
+
+"Allez, faites de toutes les nations des disciples" - Matthieu 28:19

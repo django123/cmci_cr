@@ -1,0 +1,115 @@
+package com.cmci.cr.config;
+
+import com.cmci.cr.application.usecase.*;
+import com.cmci.cr.domain.event.DomainEventPublisher;
+import com.cmci.cr.domain.repository.CommentaireRepository;
+import com.cmci.cr.domain.repository.CompteRenduRepository;
+import com.cmci.cr.domain.repository.UtilisateurRepository;
+import com.cmci.cr.domain.service.CRDomainService;
+import com.cmci.cr.domain.service.StatisticsService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Configuration des beans Use Cases
+ * Wire les dépendances entre les couches
+ */
+@Configuration
+public class BeanConfiguration {
+
+    // ===== Domain Services =====
+
+    @Bean
+    public CRDomainService crDomainService(
+            CompteRenduRepository compteRenduRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new CRDomainService(compteRenduRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public StatisticsService statisticsService() {
+        return new StatisticsService();
+    }
+
+    // ===== Use Cases =====
+
+    @Bean
+    public CreateCRUseCase createCRUseCase(
+            CompteRenduRepository compteRenduRepository,
+            DomainEventPublisher eventPublisher) {
+        return new CreateCRUseCase(compteRenduRepository, eventPublisher);
+    }
+
+    @Bean
+    public UpdateCRUseCase updateCRUseCase(
+            CompteRenduRepository compteRenduRepository,
+            DomainEventPublisher eventPublisher) {
+        return new UpdateCRUseCase(compteRenduRepository, eventPublisher);
+    }
+
+    @Bean
+    public GetCRUseCase getCRUseCase(CompteRenduRepository compteRenduRepository) {
+        return new GetCRUseCase(compteRenduRepository);
+    }
+
+    @Bean
+    public DeleteCRUseCase deleteCRUseCase(CompteRenduRepository compteRenduRepository) {
+        return new DeleteCRUseCase(compteRenduRepository);
+    }
+
+    @Bean
+    public ValidateCRUseCase validateCRUseCase(
+            CompteRenduRepository compteRenduRepository,
+            UtilisateurRepository utilisateurRepository,
+            DomainEventPublisher eventPublisher) {
+        return new ValidateCRUseCase(compteRenduRepository, utilisateurRepository, eventPublisher);
+    }
+
+    @Bean
+    public MarkCRAsViewedUseCase markAsViewedUseCase(
+            CompteRenduRepository compteRenduRepository,
+            UtilisateurRepository utilisateurRepository,
+            DomainEventPublisher eventPublisher) {
+        return new MarkCRAsViewedUseCase(compteRenduRepository, utilisateurRepository, eventPublisher);
+    }
+
+    @Bean
+    public AddCommentaireUseCase addCommentaireUseCase(
+            CommentaireRepository commentaireRepository,
+            CompteRenduRepository compteRenduRepository,
+            UtilisateurRepository utilisateurRepository,
+            DomainEventPublisher eventPublisher) {
+        return new AddCommentaireUseCase(
+                commentaireRepository, compteRenduRepository, utilisateurRepository, eventPublisher);
+    }
+
+    @Bean
+    public GetCommentairesUseCase getCommentairesUseCase(
+            CommentaireRepository commentaireRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new GetCommentairesUseCase(commentaireRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public ViewDisciplesCRUseCase viewDisciplesCRUseCase(
+            UtilisateurRepository utilisateurRepository,
+            CompteRenduRepository compteRenduRepository) {
+        return new ViewDisciplesCRUseCase(utilisateurRepository, compteRenduRepository);
+    }
+
+    @Bean
+    public GetPersonalStatisticsUseCase getPersonalStatisticsUseCase(
+            CompteRenduRepository compteRenduRepository,
+            StatisticsService statisticsService) {
+        return new GetPersonalStatisticsUseCase(compteRenduRepository, statisticsService);
+    }
+
+    @Bean
+    public GetGroupStatisticsUseCase getGroupStatisticsUseCase(
+            UtilisateurRepository utilisateurRepository,
+            CompteRenduRepository compteRenduRepository,
+            StatisticsService statisticsService) {
+        return new GetGroupStatisticsUseCase(
+                utilisateurRepository, compteRenduRepository, statisticsService);
+    }
+}
