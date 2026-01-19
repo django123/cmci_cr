@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Value Object représentant le Rendez-vous Quotidien avec Dieu (RDQD)
+ * Value Object représentant le Rencontre Dynamique Quotidien avec Dieu (RDQD)
  * Format: "accompli/attendu" (ex: "1/1", "0/1")
  */
 @Value

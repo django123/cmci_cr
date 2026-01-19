@@ -12,9 +12,9 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/cmci_cr
-    username: cmci
-    password: ${DB_PASSWORD:cmci_password}
+    url: jdbc:postgresql://localhost:5433/cmci_cr
+    username: cmci_user
+    password: cmci_password
     driver-class-name: org.postgresql.Driver
 
   jpa:
