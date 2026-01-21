@@ -6,10 +6,6 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
     url: jdbc:postgresql://localhost:5433/cmci_cr
@@ -85,3 +81,9 @@ logging:
     com.cmci.cr: DEBUG
     org.springframework.web: DEBUG
     org.hibernate: INFO
+
+# Configuration application
+app:
+  security:
+    cors:
+      allowed-origins: http://localhost:3000,http://localhost:5173

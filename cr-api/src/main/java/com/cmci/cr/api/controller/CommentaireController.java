@@ -80,7 +80,7 @@ public class CommentaireController {
         log.info("Getting comments for CR {}", compteRenduId);
 
         List<com.cmci.cr.application.dto.response.CommentaireResponse> responses =
-                getCommentairesUseCase.execute(compteRenduId);
+                getCommentairesUseCase.getByCompteRenduId(compteRenduId);
 
         List<CommentaireResponse> apiResponses = responses.stream()
                 .map(mapper::toApiResponse)

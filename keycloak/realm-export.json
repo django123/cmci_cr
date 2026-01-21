@@ -1,0 +1,661 @@
+{
+  "realm": "cmci",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "defaultRole": {
+    "name": "default-roles-cmci",
+    "description": "Default roles for CMCI realm",
+    "composite": true,
+    "clientRole": false
+  },
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN",
+        "description": "Administrateur système avec tous les droits"
+      },
+      {
+        "name": "PASTEUR",
+        "description": "Pasteur responsable d'une église locale"
+      },
+      {
+        "name": "LEADER",
+        "description": "Leader responsable d'une église de maison"
+      },
+      {
+        "name": "FD",
+        "description": "Frère/Soeur Dévoué(e) - Accompagnateur de fidèles"
+      },
+      {
+        "name": "FIDELE",
+        "description": "Fidèle membre de l'église"
+      }
+    ],
+    "client": {
+      "cmci-cr-frontend": [],
+      "cmci-cr-backend": []
+    }
+  },
+  "clients": [
+    {
+      "clientId": "cmci-cr-frontend",
+      "name": "CMCI CR Frontend Application",
+      "description": "Application frontend React/Vue pour les comptes rendus",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "rootUrl": "http://localhost:3000",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*",
+        "https://*.cmci.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://*.cmci.org"
+      ],
+      "protocol": "openid-connect",
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:5173/*"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "profile",
+        "roles",
+        "email",
+        "openid"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "user_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "user_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "user_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "multivalued": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "cmci-cr-backend",
+      "name": "CMCI CR Backend Service",
+      "description": "Service backend Spring Boot",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@cmci.org",
+      "email": "admin@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "CMCI",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000001"]
+      },
+      "realmRoles": ["ADMIN"]
+    },
+    {
+      "username": "pasteur@cmci.org",
+      "email": "pasteur@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Jean",
+      "lastName": "PASTEUR",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pasteur123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000002"]
+      },
+      "realmRoles": ["PASTEUR"]
+    },
+    {
+      "username": "pasteur.lyon@cmci.org",
+      "email": "pasteur.lyon@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Marc",
+      "lastName": "DUPONT",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pasteur123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000003"]
+      },
+      "realmRoles": ["PASTEUR"]
+    },
+    {
+      "username": "pasteur.bruxelles@cmci.org",
+      "email": "pasteur.bruxelles@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Joseph",
+      "lastName": "MARTIN",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pasteur123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000004"]
+      },
+      "realmRoles": ["PASTEUR"]
+    },
+    {
+      "username": "pasteur.douala@cmci.org",
+      "email": "pasteur.douala@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Samuel",
+      "lastName": "KAMGA",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pasteur123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000005"]
+      },
+      "realmRoles": ["PASTEUR"]
+    },
+    {
+      "username": "leader@cmci.org",
+      "email": "leader@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Pierre",
+      "lastName": "LEADER",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000010"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "leader2@cmci.org",
+      "email": "leader2@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Thomas",
+      "lastName": "BERNARD",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000011"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "leader3@cmci.org",
+      "email": "leader3@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "François",
+      "lastName": "LEROY",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000012"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "leader.lyon@cmci.org",
+      "email": "leader.lyon@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Philippe",
+      "lastName": "ROUX",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000013"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "leader.bruxelles@cmci.org",
+      "email": "leader.bruxelles@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Luc",
+      "lastName": "JANSSEN",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000014"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "leader.douala@cmci.org",
+      "email": "leader.douala@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Emmanuel",
+      "lastName": "NKODO",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "leader123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000015"]
+      },
+      "realmRoles": ["LEADER"]
+    },
+    {
+      "username": "fd@cmci.org",
+      "email": "fd@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Marie",
+      "lastName": "FD",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fd123456",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000020"]
+      },
+      "realmRoles": ["FD"]
+    },
+    {
+      "username": "fd2@cmci.org",
+      "email": "fd2@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Sophie",
+      "lastName": "MOREAU",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fd123456",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000021"]
+      },
+      "realmRoles": ["FD"]
+    },
+    {
+      "username": "fd3@cmci.org",
+      "email": "fd3@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Claire",
+      "lastName": "PETIT",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fd123456",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000022"]
+      },
+      "realmRoles": ["FD"]
+    },
+    {
+      "username": "fd.lyon@cmci.org",
+      "email": "fd.lyon@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Isabelle",
+      "lastName": "GARNIER",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fd123456",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000023"]
+      },
+      "realmRoles": ["FD"]
+    },
+    {
+      "username": "fd.douala@cmci.org",
+      "email": "fd.douala@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Ruth",
+      "lastName": "MBARGA",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fd123456",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000024"]
+      },
+      "realmRoles": ["FD"]
+    },
+    {
+      "username": "fidele@cmci.org",
+      "email": "fidele@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Paul",
+      "lastName": "FIDELE",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000030"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele2@cmci.org",
+      "email": "fidele2@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Antoine",
+      "lastName": "LAMBERT",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000031"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele3@cmci.org",
+      "email": "fidele3@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Julie",
+      "lastName": "DUBOIS",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000032"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele4@cmci.org",
+      "email": "fidele4@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Lucas",
+      "lastName": "MARTINEZ",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000033"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele5@cmci.org",
+      "email": "fidele5@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Emma",
+      "lastName": "GARCIA",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000034"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele6@cmci.org",
+      "email": "fidele6@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Nathan",
+      "lastName": "THOMAS",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000035"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele.lyon@cmci.org",
+      "email": "fidele.lyon@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Camille",
+      "lastName": "FAURE",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000036"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele.douala@cmci.org",
+      "email": "fidele.douala@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "David",
+      "lastName": "FOTSO",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000037"]
+      },
+      "realmRoles": ["FIDELE"]
+    },
+    {
+      "username": "fidele2.douala@cmci.org",
+      "email": "fidele2.douala@cmci.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Esther",
+      "lastName": "TAMBA",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fidele123",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "user_id": ["d1000000-0000-0000-0000-000000000038"]
+      },
+      "realmRoles": ["FIDELE"]
+    }
+  ],
+  "scopeMappings": [
+    {
+      "client": "cmci-cr-frontend",
+      "roles": ["ADMIN", "PASTEUR", "LEADER", "FD", "FIDELE"]
+    }
+  ],
+  "clientScopeMappings": {},
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "fr"],
+  "defaultLocale": "fr",
+  "eventsEnabled": true,
+  "eventsListeners": ["jboss-logging"],
+  "enabledEventTypes": [
+    "LOGIN",
+    "LOGIN_ERROR",
+    "LOGOUT",
+    "LOGOUT_ERROR",
+    "REGISTER",
+    "REGISTER_ERROR"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "accessTokenLifespan": 3600,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300,
+  "browserSecurityHeaders": {
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "xXSSProtection": "1; mode=block",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  },
+  "smtpServer": {},
+  "loginTheme": "keycloak",
+  "accountTheme": "keycloak.v2",
+  "adminTheme": "keycloak.v2",
+  "emailTheme": "keycloak"
+}

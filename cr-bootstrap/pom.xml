@@ -17,12 +17,10 @@
 
     <dependencies>
         <!-- All other modules -->
-        <!--
         <dependency>
             <groupId>com.cmci.cr</groupId>
             <artifactId>cr-api</artifactId>
         </dependency>
-        -->
 
         <dependency>
             <groupId>com.cmci.cr</groupId>

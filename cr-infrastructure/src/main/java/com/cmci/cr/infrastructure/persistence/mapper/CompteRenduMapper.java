@@ -24,7 +24,7 @@ public class CompteRenduMapper {
                 .utilisateurId(domain.getUtilisateurId())
                 .date(domain.getDate())
                 .rdqd(domain.getRdqd() != null ? domain.getRdqd().toString() : null)
-                .priereSeule(domain.getPriereSeule())
+                .priereSeule(durationToString(domain.getPriereSeule()))
                 .lectureBiblique(domain.getLectureBiblique())
                 .livreBiblique(domain.getLivreBiblique())
                 .litteraturePages(domain.getLitteraturePages())
@@ -54,7 +54,7 @@ public class CompteRenduMapper {
                 .utilisateurId(jpa.getUtilisateurId())
                 .date(jpa.getDate())
                 .rdqd(jpa.getRdqd() != null ? RDQD.fromString(jpa.getRdqd()) : null)
-                .priereSeule(jpa.getPriereSeule())
+                .priereSeule(stringToDuration(jpa.getPriereSeule()))
                 .lectureBiblique(jpa.getLectureBiblique())
                 .livreBiblique(jpa.getLivreBiblique())
                 .litteraturePages(jpa.getLitteraturePages())
@@ -72,5 +72,36 @@ public class CompteRenduMapper {
                 .createdAt(jpa.getCreatedAt())
                 .updatedAt(jpa.getUpdatedAt())
                 .build();
+    }
+
+    /**
+     * Convertit une Duration en String au format HH:mm:ss
+     */
+    private String durationToString(Duration duration) {
+        if (duration == null) {
+            return "00:00:00";
+        }
+        long hours = duration.toHours();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    /**
+     * Convertit un String au format HH:mm:ss en Duration
+     */
+    private Duration stringToDuration(String str) {
+        if (str == null || str.isEmpty()) {
+            return Duration.ZERO;
+        }
+        // Format attendu: HH:mm:ss ou HH:mm
+        String[] parts = str.split(":");
+        if (parts.length >= 2) {
+            long hours = Long.parseLong(parts[0]);
+            long minutes = Long.parseLong(parts[1]);
+            long seconds = parts.length > 2 ? Long.parseLong(parts[2]) : 0;
+            return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds);
+        }
+        return Duration.ZERO;
     }
 }

@@ -108,9 +108,7 @@ public class CompteRenduController {
 
         log.info("Getting CR {}", id);
 
-        CRResponse response = getCRUseCase.execute(id)
-                .orElseThrow(() -> new NoSuchElementException("Compte rendu non trouvé"));
-
+        CRResponse response = getCRUseCase.getById(id);
         CompteRenduResponse apiResponse = mapper.toApiResponse(response);
         return ResponseEntity.ok(apiResponse);
     }
@@ -128,7 +126,7 @@ public class CompteRenduController {
 
         log.info("Getting CRs for user {}", utilisateurId);
 
-        List<CRResponse> responses = getCRUseCase.getByUtilisateur(utilisateurId);
+        List<CRResponse> responses = getCRUseCase.getByUtilisateurId(utilisateurId);
         List<CompteRenduResponse> apiResponses = responses.stream()
                 .map(mapper::toApiResponse)
                 .collect(Collectors.toList());
@@ -151,7 +149,7 @@ public class CompteRenduController {
 
         log.info("Getting CRs for user {} between {} and {}", utilisateurId, startDate, endDate);
 
-        List<CRResponse> responses = getCRUseCase.getByUtilisateurAndPeriod(utilisateurId, startDate, endDate);
+        List<CRResponse> responses = getCRUseCase.getByUtilisateurIdAndDateRange(utilisateurId, startDate, endDate);
         List<CompteRenduResponse> apiResponses = responses.stream()
                 .map(mapper::toApiResponse)
                 .collect(Collectors.toList());
@@ -170,9 +168,12 @@ public class CompteRenduController {
     public ResponseEntity<Void> deleteCompteRendu(
             @Parameter(description = "ID du compte rendu") @PathVariable UUID id) {
 
-        log.info("Deleting CR {}", id);
+        UUID utilisateurId = securityContextService.getCurrentUserId()
+                .orElseThrow(() -> new IllegalStateException("Utilisateur non authentifié"));
 
-        deleteCRUseCase.execute(id);
+        log.info("Deleting CR {} by user {}", id, utilisateurId);
+
+        deleteCRUseCase.execute(id, utilisateurId);
         return ResponseEntity.noContent().build();
     }
 
@@ -190,8 +191,7 @@ public class CompteRenduController {
         log.info("Submitting CR {}", id);
 
         // La soumission se fait via l'update en changeant le statut
-        CRResponse response = getCRUseCase.execute(id)
-                .orElseThrow(() -> new NoSuchElementException("Compte rendu non trouvé"));
+        CRResponse response = getCRUseCase.getById(id);
 
         // Vérifier que le CR est en brouillon
         if (!"BROUILLON".equals(response.getStatut())) {

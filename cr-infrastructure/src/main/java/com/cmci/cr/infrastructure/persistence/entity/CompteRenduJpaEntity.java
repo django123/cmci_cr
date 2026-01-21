@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,8 +37,8 @@ public class CompteRenduJpaEntity {
     @Column(name = "rdqd", nullable = false, length = 10)
     private String rdqd;
 
-    @Column(name = "priere_seule", nullable = false)
-    private Duration priereSeule;
+    @Column(name = "priere_seule", nullable = false, columnDefinition = "INTERVAL")
+    private String priereSeule;
 
     @Column(name = "lecture_biblique", nullable = false)
     private Integer lectureBiblique;

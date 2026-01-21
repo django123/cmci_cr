@@ -8,7 +8,6 @@ import com.cmci.cr.application.dto.command.UpdateCRCommand;
 import com.cmci.cr.application.dto.response.CRResponse;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.UUID;
 
 /**
@@ -21,21 +20,31 @@ public class CompteRenduApiMapper {
      * Convertit CreateCompteRenduRequest en CreateCRCommand
      */
     public CreateCRCommand toCreateCommand(CreateCompteRenduRequest request, UUID utilisateurId) {
+        // Convertir la durée de prière en format HH:mm
+        String priereSeule = "00:00";
+        if (request.getPriereSeuleMinutes() != null) {
+            int hours = request.getPriereSeuleMinutes() / 60;
+            int minutes = request.getPriereSeuleMinutes() % 60;
+            priereSeule = String.format("%02d:%02d", hours, minutes);
+        }
+
         return CreateCRCommand.builder()
                 .utilisateurId(utilisateurId)
                 .date(request.getDate())
                 .rdqd(request.getRdqd())
-                .priereSeule(Duration.ofMinutes(request.getPriereSeuleMinutes()))
-                .priereCouple(request.getPriereCoupleMinutes() != null ?
-                        Duration.ofMinutes(request.getPriereCoupleMinutes()) : Duration.ZERO)
-                .priereAvecEnfants(request.getPriereAvecEnfantsMinutes() != null ?
-                        Duration.ofMinutes(request.getPriereAvecEnfantsMinutes()) : Duration.ZERO)
-                .tempsEtudeParole(Duration.ofMinutes(request.getTempsEtudeParoleMinutes()))
-                .nombreContactsUtiles(request.getNombreContactsUtiles())
-                .invitationsCulte(request.getInvitationsCulte())
-                .offrande(request.getOffrande())
-                .evangelisations(request.getEvangelisations())
-                .commentaire(request.getCommentaire())
+                .priereSeule(priereSeule)
+                .lectureBiblique(request.getTempsEtudeParoleMinutes() != null ? request.getTempsEtudeParoleMinutes() / 10 : 0) // Approximation: 10 min par chapitre
+                .livreBiblique(null)
+                .litteraturePages(null)
+                .litteratureTotal(null)
+                .litteratureTitre(null)
+                .priereAutres(request.getNombreContactsUtiles())
+                .confession(false)
+                .jeune(false)
+                .typeJeune(null)
+                .evangelisation(request.getEvangelisations())
+                .offrande(request.getOffrande() != null && request.getOffrande().compareTo(java.math.BigDecimal.ZERO) > 0)
+                .notes(request.getCommentaire())
                 .build();
     }
 
@@ -43,22 +52,31 @@ public class CompteRenduApiMapper {
      * Convertit UpdateCompteRenduRequest en UpdateCRCommand
      */
     public UpdateCRCommand toUpdateCommand(UUID compteRenduId, UpdateCompteRenduRequest request) {
+        // Convertir la durée de prière en format HH:mm
+        String priereSeule = null;
+        if (request.getPriereSeuleMinutes() != null) {
+            int hours = request.getPriereSeuleMinutes() / 60;
+            int minutes = request.getPriereSeuleMinutes() % 60;
+            priereSeule = String.format("%02d:%02d", hours, minutes);
+        }
+
         return UpdateCRCommand.builder()
-                .compteRenduId(compteRenduId)
+                .id(compteRenduId)
+                .utilisateurId(null) // Sera défini par le controller
                 .rdqd(request.getRdqd())
-                .priereSeule(request.getPriereSeuleMinutes() != null ?
-                        Duration.ofMinutes(request.getPriereSeuleMinutes()) : null)
-                .priereCouple(request.getPriereCoupleMinutes() != null ?
-                        Duration.ofMinutes(request.getPriereCoupleMinutes()) : null)
-                .priereAvecEnfants(request.getPriereAvecEnfantsMinutes() != null ?
-                        Duration.ofMinutes(request.getPriereAvecEnfantsMinutes()) : null)
-                .tempsEtudeParole(request.getTempsEtudeParoleMinutes() != null ?
-                        Duration.ofMinutes(request.getTempsEtudeParoleMinutes()) : null)
-                .nombreContactsUtiles(request.getNombreContactsUtiles())
-                .invitationsCulte(request.getInvitationsCulte())
-                .offrande(request.getOffrande())
-                .evangelisations(request.getEvangelisations())
-                .commentaire(request.getCommentaire())
+                .priereSeule(priereSeule)
+                .lectureBiblique(null)
+                .livreBiblique(null)
+                .litteraturePages(null)
+                .litteratureTotal(null)
+                .litteratureTitre(null)
+                .priereAutres(null)
+                .confession(null)
+                .jeune(null)
+                .typeJeune(null)
+                .evangelisation(request.getEvangelisations())
+                .offrande(request.getOffrande() != null ? request.getOffrande().compareTo(java.math.BigDecimal.ZERO) > 0 : null)
+                .notes(request.getCommentaire())
                 .build();
     }
 
