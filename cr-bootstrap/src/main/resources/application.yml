@@ -8,7 +8,7 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/cmci_cr
+    url: jdbc:postgresql://localhost:5433/cmci_cr?stringtype=unspecified
     username: cmci_user
     password: cmci_password
     driver-class-name: org.postgresql.Driver

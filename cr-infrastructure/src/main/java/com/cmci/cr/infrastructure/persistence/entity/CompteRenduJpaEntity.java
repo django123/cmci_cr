@@ -3,6 +3,8 @@ package com.cmci.cr.infrastructure.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,7 +84,8 @@ public class CompteRenduJpaEntity {
     private String notes;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut", nullable = false, length = 20)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "statut", nullable = false, columnDefinition = "statut_cr_enum")
     private StatutCREnum statut;
 
     @Column(name = "vu_par_fd")
