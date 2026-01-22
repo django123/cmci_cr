@@ -1,6 +1,6 @@
 package com.cmci.cr.application.usecase;
 
-import com.cmci.cr.application.dto.CRResponse;
+import com.cmci.cr.application.dto.response.CRResponse;
 import com.cmci.cr.domain.model.CompteRendu;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
 import com.cmci.cr.domain.valueobject.RDQD;
