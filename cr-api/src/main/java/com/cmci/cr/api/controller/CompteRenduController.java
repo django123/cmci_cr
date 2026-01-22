@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
  * REST Controller pour la gestion des Comptes Rendus
  */
 @RestController
-@RequestMapping("/api/v1/cr")
+@RequestMapping("/v1/cr")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Comptes Rendus", description = "API de gestion des comptes rendus quotidiens")
 @SecurityRequirement(name = "Bearer Authentication")
+@CrossOrigin(origins = "*")
 public class CompteRenduController {
 
     private final CreateCRUseCase createCRUseCase;

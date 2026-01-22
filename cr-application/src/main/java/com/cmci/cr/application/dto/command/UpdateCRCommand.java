@@ -26,6 +26,10 @@ public class UpdateCRCommand {
 
     String priereSeule; // Format: "HH:mm" ou durée ISO
 
+    String priereCouple; // Format: "HH:mm" ou durée ISO
+
+    String priereAvecEnfants; // Format: "HH:mm" ou durée ISO
+
     @PositiveOrZero(message = "Le nombre de chapitres doit être positif ou zéro")
     Integer lectureBiblique;
 

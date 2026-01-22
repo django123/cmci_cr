@@ -31,6 +31,10 @@ public class CreateCRCommand {
     @NotNull(message = "La durée de prière seule est obligatoire")
     String priereSeule; // Format: "HH:mm" ou durée ISO
 
+    String priereCouple; // Format: "HH:mm" ou durée ISO
+
+    String priereAvecEnfants; // Format: "HH:mm" ou durée ISO
+
     @NotNull(message = "Le nombre de chapitres de lecture biblique est obligatoire")
     @PositiveOrZero(message = "Le nombre de chapitres doit être positif ou zéro")
     Integer lectureBiblique;

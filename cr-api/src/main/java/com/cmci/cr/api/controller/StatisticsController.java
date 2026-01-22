@@ -25,11 +25,12 @@ import java.util.UUID;
  * REST Controller pour les statistiques
  */
 @RestController
-@RequestMapping("/api/v1/statistics")
+@RequestMapping("/v1/statistics")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Statistiques", description = "API de statistiques et rapports")
 @SecurityRequirement(name = "Bearer Authentication")
+@CrossOrigin(origins = "*")
 public class StatisticsController {
 
     private final GetPersonalStatisticsUseCase getPersonalStatisticsUseCase;

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -36,26 +35,34 @@ public class CreateCompteRenduRequest {
     @Min(value = 0, message = "Le temps de prière avec enfants doit être positif")
     private Integer priereAvecEnfantsMinutes;
 
-    @NotNull(message = "Le temps d'étude de la Parole est obligatoire")
-    @Min(value = 0, message = "Le temps d'étude doit être positif")
-    private Integer tempsEtudeParoleMinutes;
+    @Min(value = 0, message = "Le nombre de prières avec d'autres doit être positif")
+    private Integer priereAutres;
 
-    @NotNull(message = "Le nombre de contacts utiles est obligatoire")
-    @Min(value = 0, message = "Le nombre de contacts doit être positif")
-    private Integer nombreContactsUtiles;
+    @NotNull(message = "Le nombre de chapitres lus est obligatoire")
+    @Min(value = 0, message = "Le nombre de chapitres doit être positif")
+    private Integer lectureBiblique;
 
-    @NotNull(message = "Le nombre d'invitations au culte est obligatoire")
-    @Min(value = 0, message = "Le nombre d'invitations doit être positif")
-    private Integer invitationsCulte;
+    private String livreBiblique;
 
-    @NotNull(message = "L'offrande est obligatoire")
-    @DecimalMin(value = "0.0", inclusive = true, message = "L'offrande doit être positive")
-    private BigDecimal offrande;
+    @Min(value = 0, message = "Le nombre de pages doit être positif")
+    private Integer litteraturePages;
 
-    @NotNull(message = "Le nombre d'évangélisations est obligatoire")
+    @Min(value = 0, message = "Le nombre total de pages doit être positif")
+    private Integer litteratureTotal;
+
+    private String litteratureTitre;
+
+    private Boolean confession;
+
+    private Boolean jeune;
+
+    private String typeJeune;
+
     @Min(value = 0, message = "Le nombre d'évangélisations doit être positif")
-    private Integer evangelisations;
+    private Integer evangelisation;
 
-    @Size(max = 1000, message = "Le commentaire ne peut pas dépasser 1000 caractères")
-    private String commentaire;
+    private Boolean offrande;
+
+    @Size(max = 1000, message = "Les notes ne peuvent pas dépasser 1000 caractères")
+    private String notes;
 }

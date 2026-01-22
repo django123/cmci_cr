@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 /**
  * DTO Request pour la mise à jour d'un Compte Rendu
  */
@@ -29,21 +27,33 @@ public class UpdateCompteRenduRequest {
     @Min(value = 0, message = "Le temps de prière avec enfants doit être positif")
     private Integer priereAvecEnfantsMinutes;
 
-    @Min(value = 0, message = "Le temps d'étude doit être positif")
-    private Integer tempsEtudeParoleMinutes;
+    @Min(value = 0, message = "Le nombre de prières avec d'autres doit être positif")
+    private Integer priereAutres;
 
-    @Min(value = 0, message = "Le nombre de contacts doit être positif")
-    private Integer nombreContactsUtiles;
+    @Min(value = 0, message = "Le nombre de chapitres doit être positif")
+    private Integer lectureBiblique;
 
-    @Min(value = 0, message = "Le nombre d'invitations doit être positif")
-    private Integer invitationsCulte;
+    private String livreBiblique;
 
-    @DecimalMin(value = "0.0", inclusive = true, message = "L'offrande doit être positive")
-    private BigDecimal offrande;
+    @Min(value = 0, message = "Le nombre de pages doit être positif")
+    private Integer litteraturePages;
+
+    @Min(value = 0, message = "Le nombre total de pages doit être positif")
+    private Integer litteratureTotal;
+
+    private String litteratureTitre;
+
+    private Boolean confession;
+
+    private Boolean jeune;
+
+    private String typeJeune;
 
     @Min(value = 0, message = "Le nombre d'évangélisations doit être positif")
-    private Integer evangelisations;
+    private Integer evangelisation;
 
-    @Size(max = 1000, message = "Le commentaire ne peut pas dépasser 1000 caractères")
-    private String commentaire;
+    private Boolean offrande;
+
+    @Size(max = 1000, message = "Les notes ne peuvent pas dépasser 1000 caractères")
+    private String notes;
 }

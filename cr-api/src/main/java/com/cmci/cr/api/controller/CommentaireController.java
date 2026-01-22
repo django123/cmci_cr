@@ -28,11 +28,12 @@ import java.util.stream.Collectors;
  * REST Controller pour la gestion des Commentaires
  */
 @RestController
-@RequestMapping("/api/v1/cr/{compteRenduId}/commentaires")
+@RequestMapping("/v1/cr/{compteRenduId}/commentaires")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Commentaires", description = "API de gestion des commentaires sur les comptes rendus")
 @SecurityRequirement(name = "Bearer Authentication")
+@CrossOrigin(origins = "*")
 public class CommentaireController {
 
     private final AddCommentaireUseCase addCommentaireUseCase;
