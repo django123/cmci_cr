@@ -1,5 +1,6 @@
 package com.cmci.cr.infrastructure.persistence.entity;
 
+import com.cmci.cr.infrastructure.persistence.converter.PostgresIntervalConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
