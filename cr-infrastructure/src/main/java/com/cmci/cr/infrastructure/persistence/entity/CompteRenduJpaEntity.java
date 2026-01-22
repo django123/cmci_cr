@@ -1,6 +1,5 @@
 package com.cmci.cr.infrastructure.persistence.entity;
 
-import com.cmci.cr.infrastructure.persistence.converter.PostgresIntervalConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -38,7 +37,7 @@ public class CompteRenduJpaEntity {
     @Column(name = "rdqd", nullable = false, length = 10)
     private String rdqd;
 
-    @Column(name = "priere_seule", nullable = false, columnDefinition = "INTERVAL")
+    @Column(name = "priere_seule", nullable = false, length = 20)
     private String priereSeule;
 
     @Column(name = "lecture_biblique", nullable = false)
