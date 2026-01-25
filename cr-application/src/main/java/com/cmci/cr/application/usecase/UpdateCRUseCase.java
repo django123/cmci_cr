@@ -105,22 +105,22 @@ public class UpdateCRUseCase {
                 .id(cr.getId())
                 .utilisateurId(cr.getUtilisateurId())
                 .date(cr.getDate())
-                .rdqd(cr.getRdqd().toString())
+                .rdqd(cr.getRdqd() != null ? cr.getRdqd().toString() : "0/1")
                 .priereSeule(formatDuration(cr.getPriereSeule()))
-                .lectureBiblique(cr.getLectureBiblique())
+                .lectureBiblique(cr.getLectureBiblique() != null ? cr.getLectureBiblique() : 0)
                 .livreBiblique(cr.getLivreBiblique())
                 .litteraturePages(cr.getLitteraturePages())
                 .litteratureTotal(cr.getLitteratureTotal())
                 .litteratureTitre(cr.getLitteratureTitre())
-                .priereAutres(cr.getPriereAutres())
-                .confession(cr.getConfession())
-                .jeune(cr.getJeune())
+                .priereAutres(cr.getPriereAutres() != null ? cr.getPriereAutres() : 0)
+                .confession(cr.getConfession() != null ? cr.getConfession() : false)
+                .jeune(cr.getJeune() != null ? cr.getJeune() : false)
                 .typeJeune(cr.getTypeJeune())
-                .evangelisation(cr.getEvangelisation())
-                .offrande(cr.getOffrande())
+                .evangelisation(cr.getEvangelisation() != null ? cr.getEvangelisation() : 0)
+                .offrande(cr.getOffrande() != null ? cr.getOffrande() : false)
                 .notes(cr.getNotes())
-                .statut(cr.getStatut().name())
-                .vuParFd(cr.getVuParFd())
+                .statut(cr.getStatut() != null ? cr.getStatut().name() : "BROUILLON")
+                .vuParFd(cr.getVuParFd() != null ? cr.getVuParFd() : false)
                 .createdAt(cr.getCreatedAt())
                 .updatedAt(cr.getUpdatedAt())
                 .build();
@@ -130,6 +130,9 @@ public class UpdateCRUseCase {
      * Formate une durée au format "HH:mm"
      */
     private String formatDuration(Duration duration) {
+        if (duration == null) {
+            return "00:00";
+        }
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();
         return String.format("%02d:%02d", hours, minutes);
