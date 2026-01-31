@@ -37,6 +37,9 @@ public class EgliseMaisonJpaEntity {
     @Column(name = "eglise_locale_id", nullable = false)
     private UUID egliseLocaleId;
 
+    @Column(name = "leader_id")
+    private UUID leaderId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

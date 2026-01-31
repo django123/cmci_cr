@@ -4,6 +4,8 @@ import com.cmci.cr.application.usecase.*;
 import com.cmci.cr.domain.event.DomainEventPublisher;
 import com.cmci.cr.domain.repository.CommentaireRepository;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
+import com.cmci.cr.domain.repository.EgliseLocaleRepository;
+import com.cmci.cr.domain.repository.EgliseMaisonRepository;
 import com.cmci.cr.domain.repository.UtilisateurRepository;
 import com.cmci.cr.domain.service.CRDomainService;
 import com.cmci.cr.domain.service.StatisticsService;
@@ -89,6 +91,16 @@ public class BeanConfiguration {
             CompteRenduRepository compteRenduRepository,
             CRDomainService crDomainService) {
         return new ViewDisciplesCRUseCase(utilisateurRepository, compteRenduRepository, crDomainService);
+    }
+
+    @Bean
+    public GetSubordinatesCRUseCase getSubordinatesCRUseCase(
+            UtilisateurRepository utilisateurRepository,
+            CompteRenduRepository compteRenduRepository,
+            EgliseMaisonRepository egliseMaisonRepository,
+            EgliseLocaleRepository egliseLocaleRepository) {
+        return new GetSubordinatesCRUseCase(
+                utilisateurRepository, compteRenduRepository, egliseMaisonRepository, egliseLocaleRepository);
     }
 
     @Bean

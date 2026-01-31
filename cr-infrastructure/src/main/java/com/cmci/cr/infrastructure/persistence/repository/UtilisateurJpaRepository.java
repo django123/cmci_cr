@@ -43,4 +43,9 @@ public interface UtilisateurJpaRepository extends JpaRepository<UtilisateurJpaEn
      * Compte le nombre de disciples d'un FD
      */
     long countByFdId(UUID fdId);
+
+    /**
+     * Trouve tous les utilisateurs appartenant à plusieurs églises de maison
+     */
+    List<UtilisateurJpaEntity> findByEgliseMaisonIdIn(List<UUID> egliseMaisonIds);
 }

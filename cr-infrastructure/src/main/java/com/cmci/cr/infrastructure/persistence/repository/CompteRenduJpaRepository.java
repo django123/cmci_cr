@@ -61,4 +61,17 @@ public interface CompteRenduJpaRepository extends JpaRepository<CompteRenduJpaEn
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    /**
+     * Trouve les CR de plusieurs utilisateurs entre deux dates
+     */
+    @Query("SELECT cr FROM CompteRenduJpaEntity cr " +
+           "WHERE cr.utilisateurId IN :utilisateurIds " +
+           "AND cr.date BETWEEN :startDate AND :endDate " +
+           "ORDER BY cr.date DESC")
+    List<CompteRenduJpaEntity> findByUtilisateurIdInAndDateBetween(
+            @Param("utilisateurIds") List<UUID> utilisateurIds,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

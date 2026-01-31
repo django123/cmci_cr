@@ -86,4 +86,11 @@ public class CacheableUtilisateurRepositoryDecorator implements UtilisateurRepos
     public long countByFdId(UUID fdId) {
         return delegate.countByFdId(fdId);
     }
+
+    @Override
+    @Cacheable(value = CacheNames.UTILISATEURS,
+               key = "'eglises:' + #egliseMaisonIds.hashCode()")
+    public List<Utilisateur> findByEgliseMaisonIdIn(List<UUID> egliseMaisonIds) {
+        return delegate.findByEgliseMaisonIdIn(egliseMaisonIds);
+    }
 }

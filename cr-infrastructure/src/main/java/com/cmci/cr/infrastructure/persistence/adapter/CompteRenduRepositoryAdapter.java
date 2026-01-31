@@ -88,4 +88,18 @@ public class CompteRenduRepositoryAdapter implements CompteRenduRepository {
             LocalDate endDate) {
         return jpaRepository.countByUtilisateurIdAndDateBetween(utilisateurId, startDate, endDate);
     }
+
+    @Override
+    public List<CompteRendu> findByUtilisateurIdInAndDateBetween(
+            List<UUID> utilisateurIds,
+            LocalDate startDate,
+            LocalDate endDate) {
+        if (utilisateurIds == null || utilisateurIds.isEmpty()) {
+            return List.of();
+        }
+        return jpaRepository.findByUtilisateurIdInAndDateBetween(utilisateurIds, startDate, endDate)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

@@ -28,4 +28,9 @@ public interface EgliseLocaleJpaRepository extends JpaRepository<EgliseLocaleJpa
      * Vérifie si un code existe déjà
      */
     boolean existsByCode(String code);
+
+    /**
+     * Trouve les églises locales dirigées par un pasteur
+     */
+    List<EgliseLocaleJpaEntity> findByPasteurId(UUID pasteurId);
 }

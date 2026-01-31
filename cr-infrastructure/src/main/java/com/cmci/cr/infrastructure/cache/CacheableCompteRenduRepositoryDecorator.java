@@ -94,4 +94,14 @@ public class CacheableCompteRenduRepositoryDecorator implements CompteRenduRepos
             LocalDate endDate) {
         return delegate.countByUtilisateurIdAndDateBetween(utilisateurId, startDate, endDate);
     }
+
+    @Override
+    @Cacheable(value = CacheNames.COMPTES_RENDUS,
+               key = "'users:' + #utilisateurIds.hashCode() + ':period:' + #startDate + ':' + #endDate")
+    public List<CompteRendu> findByUtilisateurIdInAndDateBetween(
+            List<UUID> utilisateurIds,
+            LocalDate startDate,
+            LocalDate endDate) {
+        return delegate.findByUtilisateurIdInAndDateBetween(utilisateurIds, startDate, endDate);
+    }
 }

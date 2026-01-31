@@ -34,6 +34,12 @@ public class EgliseLocaleJpaEntity {
     @Column(name = "zone_id", nullable = false)
     private UUID zoneId;
 
+    @Column(name = "adresse")
+    private String adresse;
+
+    @Column(name = "pasteur_id")
+    private UUID pasteurId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

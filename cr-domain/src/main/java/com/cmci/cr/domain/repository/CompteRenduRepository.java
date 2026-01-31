@@ -65,4 +65,13 @@ public interface CompteRenduRepository {
             LocalDate startDate,
             LocalDate endDate
     );
+
+    /**
+     * Trouve les CR de plusieurs utilisateurs entre deux dates
+     */
+    List<CompteRendu> findByUtilisateurIdInAndDateBetween(
+            List<UUID> utilisateurIds,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 }

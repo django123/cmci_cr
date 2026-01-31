@@ -83,4 +83,15 @@ public class UtilisateurRepositoryAdapter implements UtilisateurRepository {
     public long countByFdId(UUID fdId) {
         return jpaRepository.countByFdId(fdId);
     }
+
+    @Override
+    public List<Utilisateur> findByEgliseMaisonIdIn(List<UUID> egliseMaisonIds) {
+        if (egliseMaisonIds == null || egliseMaisonIds.isEmpty()) {
+            return List.of();
+        }
+        return jpaRepository.findByEgliseMaisonIdIn(egliseMaisonIds)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

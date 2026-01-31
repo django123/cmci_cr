@@ -28,4 +28,9 @@ public interface EgliseMaisonJpaRepository extends JpaRepository<EgliseMaisonJpa
      * Vérifie si un code existe déjà
      */
     boolean existsByCode(String code);
+
+    /**
+     * Trouve l'église de maison dirigée par un leader
+     */
+    List<EgliseMaisonJpaEntity> findByLeaderId(UUID leaderId);
 }

@@ -57,4 +57,9 @@ public interface UtilisateurRepository {
      * Compte le nombre de disciples d'un FD
      */
     long countByFdId(UUID fdId);
+
+    /**
+     * Trouve tous les utilisateurs appartenant à plusieurs églises de maison
+     */
+    List<Utilisateur> findByEgliseMaisonIdIn(List<UUID> egliseMaisonIds);
 }
