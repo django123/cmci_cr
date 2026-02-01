@@ -1,10 +1,13 @@
 package com.cmci.cr.api.controller;
 
+import com.cmci.cr.api.dto.response.SubordinateStatisticsApiResponse;
 import com.cmci.cr.api.dto.response.SubordinateWithCRsApiResponse;
 import com.cmci.cr.api.mapper.SubordinatesApiMapper;
 import com.cmci.cr.application.dto.response.DiscipleWithCRStatusResponse;
+import com.cmci.cr.application.dto.response.SubordinateStatisticsResponse;
 import com.cmci.cr.application.dto.response.SubordinateWithCRsResponse;
 import com.cmci.cr.application.usecase.GetSubordinatesCRUseCase;
+import com.cmci.cr.application.usecase.GetSubordinatesStatisticsUseCase;
 import com.cmci.cr.application.usecase.ViewDisciplesCRUseCase;
 import com.cmci.cr.infrastructure.security.SecurityContextService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +41,7 @@ import java.util.UUID;
 public class SubordinatesController {
 
     private final GetSubordinatesCRUseCase getSubordinatesCRUseCase;
+    private final GetSubordinatesStatisticsUseCase getSubordinatesStatisticsUseCase;
     private final ViewDisciplesCRUseCase viewDisciplesCRUseCase;
     private final SubordinatesApiMapper mapper;
     private final SecurityContextService securityContextService;
@@ -136,6 +140,36 @@ public class SubordinatesController {
                         .compteRendus(List.of()) // Pas de détails
                         .build())
                 .toList();
+
+        return ResponseEntity.ok(apiResponses);
+    }
+
+    @GetMapping("/statistics")
+    @Operation(summary = "Récupérer les statistiques des subordonnés",
+               description = "Récupère les statistiques détaillées de chaque subordonné selon la hiérarchie: "
+                       + "FD → ses disciples, Leader → membres de son église de maison, "
+                       + "Pasteur → membres de son église locale")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Liste des subordonnés avec leurs statistiques"),
+        @ApiResponse(responseCode = "401", description = "Non authentifié"),
+        @ApiResponse(responseCode = "403", description = "Accès refusé - rôle insuffisant")
+    })
+    @PreAuthorize("hasAnyRole('FD', 'LEADER', 'PASTEUR', 'ADMIN')")
+    public ResponseEntity<List<SubordinateStatisticsApiResponse>> getSubordinatesStatistics(
+            @Parameter(description = "Date de début")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "Date de fin")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        UUID responsableId = securityContextService.getCurrentUserId()
+                .orElseThrow(() -> new IllegalStateException("Utilisateur non authentifié"));
+
+        log.info("Getting subordinates statistics for user {} from {} to {}", responsableId, startDate, endDate);
+
+        List<SubordinateStatisticsResponse> responses = getSubordinatesStatisticsUseCase.execute(
+                responsableId, startDate, endDate);
+
+        List<SubordinateStatisticsApiResponse> apiResponses = mapper.toStatisticsApiResponses(responses);
 
         return ResponseEntity.ok(apiResponses);
     }

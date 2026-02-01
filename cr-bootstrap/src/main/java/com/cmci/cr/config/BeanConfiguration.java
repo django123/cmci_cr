@@ -104,6 +104,18 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public GetSubordinatesStatisticsUseCase getSubordinatesStatisticsUseCase(
+            UtilisateurRepository utilisateurRepository,
+            CompteRenduRepository compteRenduRepository,
+            EgliseMaisonRepository egliseMaisonRepository,
+            EgliseLocaleRepository egliseLocaleRepository,
+            StatisticsService statisticsService) {
+        return new GetSubordinatesStatisticsUseCase(
+                utilisateurRepository, compteRenduRepository, egliseMaisonRepository,
+                egliseLocaleRepository, statisticsService);
+    }
+
+    @Bean
     public GetPersonalStatisticsUseCase getPersonalStatisticsUseCase(
             StatisticsService statisticsService) {
         return new GetPersonalStatisticsUseCase(statisticsService);

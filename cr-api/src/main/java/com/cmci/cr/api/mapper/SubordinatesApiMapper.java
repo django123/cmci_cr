@@ -1,8 +1,10 @@
 package com.cmci.cr.api.mapper;
 
 import com.cmci.cr.api.dto.response.SubordinateCRApiResponse;
+import com.cmci.cr.api.dto.response.SubordinateStatisticsApiResponse;
 import com.cmci.cr.api.dto.response.SubordinateWithCRsApiResponse;
 import com.cmci.cr.application.dto.response.SubordinateCRResponse;
+import com.cmci.cr.application.dto.response.SubordinateStatisticsResponse;
 import com.cmci.cr.application.dto.response.SubordinateWithCRsResponse;
 import org.springframework.stereotype.Component;
 
@@ -72,6 +74,47 @@ public class SubordinatesApiMapper {
     public List<SubordinateWithCRsApiResponse> toApiResponses(List<SubordinateWithCRsResponse> appResponses) {
         return appResponses.stream()
                 .map(this::toApiResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Convertit SubordinateStatisticsResponse (application) en SubordinateStatisticsApiResponse (API)
+     */
+    public SubordinateStatisticsApiResponse toStatisticsApiResponse(SubordinateStatisticsResponse appResponse) {
+        return SubordinateStatisticsApiResponse.builder()
+                .utilisateurId(appResponse.getUtilisateurId())
+                .nom(appResponse.getNom())
+                .prenom(appResponse.getPrenom())
+                .nomComplet(appResponse.getNomComplet())
+                .email(appResponse.getEmail())
+                .role(appResponse.getRole())
+                .roleDisplayName(appResponse.getRoleDisplayName())
+                .avatarUrl(appResponse.getAvatarUrl())
+                .startDate(appResponse.getStartDate())
+                .endDate(appResponse.getEndDate())
+                .nombreTotalCRs(appResponse.getNombreTotalCRs())
+                .tauxRegularite(appResponse.getTauxRegularite())
+                .rdqdCompletCount(appResponse.getRdqdCompletCount())
+                .tauxRDQD(appResponse.getTauxRDQD())
+                .dureeTotalePriere(appResponse.getDureeTotalePriere())
+                .dureeMoyennePriere(appResponse.getDureeMoyennePriere())
+                .totalChapitresLus(appResponse.getTotalChapitresLus())
+                .moyenneChapitresParJour(appResponse.getMoyenneChapitresParJour())
+                .totalPersonnesEvangelisees(appResponse.getTotalPersonnesEvangelisees())
+                .nombreConfessions(appResponse.getNombreConfessions())
+                .nombreJeunes(appResponse.getNombreJeunes())
+                .tendancePositive(appResponse.getTendancePositive())
+                .alertLevel(appResponse.getAlertLevel())
+                .hasAlert(appResponse.getHasAlert())
+                .build();
+    }
+
+    /**
+     * Convertit une liste de SubordinateStatisticsResponse en SubordinateStatisticsApiResponse
+     */
+    public List<SubordinateStatisticsApiResponse> toStatisticsApiResponses(List<SubordinateStatisticsResponse> appResponses) {
+        return appResponses.stream()
+                .map(this::toStatisticsApiResponse)
                 .collect(Collectors.toList());
     }
 }
