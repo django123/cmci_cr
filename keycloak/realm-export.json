@@ -2,7 +2,8 @@
   "realm": "cmci",
   "enabled": true,
   "sslRequired": "external",
-  "registrationAllowed": false,
+  "registrationAllowed": true,
+  "verifyEmail": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
@@ -19,7 +20,10 @@
     "name": "default-roles-cmci",
     "description": "Default roles for CMCI realm",
     "composite": true,
-    "clientRole": false
+    "clientRole": false,
+    "composites": {
+      "realm": ["FIDELE"]
+    }
   },
   "roles": {
     "realm": [
@@ -135,6 +139,21 @@
       "authorizationServicesEnabled": false,
       "fullScopeAllowed": true,
       "protocol": "openid-connect"
+    },
+    {
+      "clientId": "cmci-cr-admin",
+      "name": "CMCI CR Admin Service",
+      "description": "Client pour l'administration des utilisateurs via l'API Admin Keycloak",
+      "enabled": true,
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "cmci-admin-secret-2024",
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true
     }
   ],
   "users": [

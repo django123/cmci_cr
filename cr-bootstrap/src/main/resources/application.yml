@@ -87,3 +87,11 @@ app:
   security:
     cors:
       allowed-origins: http://localhost:3000,http://localhost:4200,http://localhost:5173
+
+# Keycloak Admin Client Configuration
+keycloak:
+  admin:
+    server-url: ${KEYCLOAK_SERVER_URL:http://localhost:8180}
+    realm: ${KEYCLOAK_REALM:cmci}
+    username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:admin123}

@@ -2,6 +2,7 @@ package com.cmci.cr.config;
 
 import com.cmci.cr.application.usecase.*;
 import com.cmci.cr.domain.event.DomainEventPublisher;
+import com.cmci.cr.domain.port.IdentityProviderPort;
 import com.cmci.cr.domain.repository.CommentaireRepository;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
 import com.cmci.cr.domain.repository.EgliseLocaleRepository;
@@ -160,5 +161,13 @@ public class BeanConfiguration {
     public ChangeRoleUseCase changeRoleUseCase(
             UtilisateurRepository utilisateurRepository) {
         return new ChangeRoleUseCase(utilisateurRepository);
+    }
+
+    // ===== User Administration Use Case (Keycloak) =====
+
+    @Bean
+    public UserAdministrationUseCase userAdministrationUseCase(
+            IdentityProviderPort identityProviderPort) {
+        return new UserAdministrationUseCase(identityProviderPort);
     }
 }
