@@ -6,12 +6,16 @@ import org.springframework.context.annotation.Primary;
 
 import com.cmci.cr.domain.repository.CommentaireRepository;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
+import com.cmci.cr.domain.repository.RegionRepository;
 import com.cmci.cr.domain.repository.UtilisateurRepository;
+import com.cmci.cr.domain.repository.ZoneRepository;
 import com.cmci.cr.infrastructure.cache.CacheableCompteRenduRepositoryDecorator;
 import com.cmci.cr.infrastructure.cache.CacheableUtilisateurRepositoryDecorator;
 import com.cmci.cr.infrastructure.persistence.adapter.CommentaireRepositoryAdapter;
 import com.cmci.cr.infrastructure.persistence.adapter.CompteRenduRepositoryAdapter;
+import com.cmci.cr.infrastructure.persistence.adapter.RegionRepositoryAdapter;
 import com.cmci.cr.infrastructure.persistence.adapter.UtilisateurRepositoryAdapter;
+import com.cmci.cr.infrastructure.persistence.adapter.ZoneRepositoryAdapter;
 
 /**
  * Configuration centrale de l'application
@@ -47,6 +51,26 @@ public class ApplicationConfiguration {
     @Primary
     public CommentaireRepository commentaireRepository(
             CommentaireRepositoryAdapter adapter) {
+        return adapter;
+    }
+
+    /**
+     * Repository Region
+     */
+    @Bean
+    @Primary
+    public RegionRepository regionRepository(
+            RegionRepositoryAdapter adapter) {
+        return adapter;
+    }
+
+    /**
+     * Repository Zone
+     */
+    @Bean
+    @Primary
+    public ZoneRepository zoneRepository(
+            ZoneRepositoryAdapter adapter) {
         return adapter;
     }
 }

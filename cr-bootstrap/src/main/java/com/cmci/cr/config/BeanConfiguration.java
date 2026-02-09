@@ -7,7 +7,9 @@ import com.cmci.cr.domain.repository.CommentaireRepository;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
 import com.cmci.cr.domain.repository.EgliseLocaleRepository;
 import com.cmci.cr.domain.repository.EgliseMaisonRepository;
+import com.cmci.cr.domain.repository.RegionRepository;
 import com.cmci.cr.domain.repository.UtilisateurRepository;
+import com.cmci.cr.domain.repository.ZoneRepository;
 import com.cmci.cr.domain.service.CRDomainService;
 import com.cmci.cr.domain.service.StatisticsService;
 import org.springframework.context.annotation.Bean;
@@ -169,5 +171,143 @@ public class BeanConfiguration {
     public UserAdministrationUseCase userAdministrationUseCase(
             IdentityProviderPort identityProviderPort) {
         return new UserAdministrationUseCase(identityProviderPort);
+    }
+
+    // ===== Region Use Cases =====
+
+    @Bean
+    public CreateRegionUseCase createRegionUseCase(
+            RegionRepository regionRepository,
+            ZoneRepository zoneRepository) {
+        return new CreateRegionUseCase(regionRepository, zoneRepository);
+    }
+
+    @Bean
+    public GetRegionUseCase getRegionUseCase(
+            RegionRepository regionRepository,
+            ZoneRepository zoneRepository) {
+        return new GetRegionUseCase(regionRepository, zoneRepository);
+    }
+
+    @Bean
+    public UpdateRegionUseCase updateRegionUseCase(
+            RegionRepository regionRepository,
+            ZoneRepository zoneRepository) {
+        return new UpdateRegionUseCase(regionRepository, zoneRepository);
+    }
+
+    @Bean
+    public DeleteRegionUseCase deleteRegionUseCase(
+            RegionRepository regionRepository,
+            ZoneRepository zoneRepository) {
+        return new DeleteRegionUseCase(regionRepository, zoneRepository);
+    }
+
+    // ===== Zone Use Cases =====
+
+    @Bean
+    public CreateZoneUseCase createZoneUseCase(
+            ZoneRepository zoneRepository,
+            RegionRepository regionRepository,
+            EgliseLocaleRepository egliseLocaleRepository) {
+        return new CreateZoneUseCase(zoneRepository, regionRepository, egliseLocaleRepository);
+    }
+
+    @Bean
+    public GetZoneUseCase getZoneUseCase(
+            ZoneRepository zoneRepository,
+            RegionRepository regionRepository,
+            EgliseLocaleRepository egliseLocaleRepository) {
+        return new GetZoneUseCase(zoneRepository, regionRepository, egliseLocaleRepository);
+    }
+
+    @Bean
+    public UpdateZoneUseCase updateZoneUseCase(
+            ZoneRepository zoneRepository,
+            RegionRepository regionRepository,
+            EgliseLocaleRepository egliseLocaleRepository) {
+        return new UpdateZoneUseCase(zoneRepository, regionRepository, egliseLocaleRepository);
+    }
+
+    @Bean
+    public DeleteZoneUseCase deleteZoneUseCase(
+            ZoneRepository zoneRepository,
+            EgliseLocaleRepository egliseLocaleRepository) {
+        return new DeleteZoneUseCase(zoneRepository, egliseLocaleRepository);
+    }
+
+    // ===== EgliseLocale Use Cases =====
+
+    @Bean
+    public CreateEgliseLocaleUseCase createEgliseLocaleUseCase(
+            EgliseLocaleRepository egliseLocaleRepository,
+            ZoneRepository zoneRepository,
+            EgliseMaisonRepository egliseMaisonRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new CreateEgliseLocaleUseCase(
+                egliseLocaleRepository, zoneRepository, egliseMaisonRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public GetEgliseLocaleUseCase getEgliseLocaleUseCase(
+            EgliseLocaleRepository egliseLocaleRepository,
+            ZoneRepository zoneRepository,
+            EgliseMaisonRepository egliseMaisonRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new GetEgliseLocaleUseCase(
+                egliseLocaleRepository, zoneRepository, egliseMaisonRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public UpdateEgliseLocaleUseCase updateEgliseLocaleUseCase(
+            EgliseLocaleRepository egliseLocaleRepository,
+            ZoneRepository zoneRepository,
+            EgliseMaisonRepository egliseMaisonRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new UpdateEgliseLocaleUseCase(
+                egliseLocaleRepository, zoneRepository, egliseMaisonRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public DeleteEgliseLocaleUseCase deleteEgliseLocaleUseCase(
+            EgliseLocaleRepository egliseLocaleRepository,
+            EgliseMaisonRepository egliseMaisonRepository) {
+        return new DeleteEgliseLocaleUseCase(egliseLocaleRepository, egliseMaisonRepository);
+    }
+
+    // ===== EgliseMaison Use Cases =====
+
+    @Bean
+    public CreateEgliseMaisonUseCase createEgliseMaisonUseCase(
+            EgliseMaisonRepository egliseMaisonRepository,
+            EgliseLocaleRepository egliseLocaleRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new CreateEgliseMaisonUseCase(
+                egliseMaisonRepository, egliseLocaleRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public GetEgliseMaisonUseCase getEgliseMaisonUseCase(
+            EgliseMaisonRepository egliseMaisonRepository,
+            EgliseLocaleRepository egliseLocaleRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new GetEgliseMaisonUseCase(
+                egliseMaisonRepository, egliseLocaleRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public UpdateEgliseMaisonUseCase updateEgliseMaisonUseCase(
+            EgliseMaisonRepository egliseMaisonRepository,
+            EgliseLocaleRepository egliseLocaleRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new UpdateEgliseMaisonUseCase(
+                egliseMaisonRepository, egliseLocaleRepository, utilisateurRepository);
+    }
+
+    @Bean
+    public DeleteEgliseMaisonUseCase deleteEgliseMaisonUseCase(
+            EgliseMaisonRepository egliseMaisonRepository,
+            UtilisateurRepository utilisateurRepository) {
+        return new DeleteEgliseMaisonUseCase(egliseMaisonRepository, utilisateurRepository);
     }
 }
