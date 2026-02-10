@@ -68,14 +68,13 @@ public class EgliseLocaleRepositoryAdapter implements EgliseLocaleRepository {
 
     @Override
     public long countByZoneId(UUID zoneId) {
-        return jpaRepository.findByZoneId(zoneId).size();
+        return jpaRepository.countByZoneId(zoneId);
     }
 
     @Override
     public List<EgliseLocale> findByPasteurIdIsNull() {
-        return jpaRepository.findAll()
+        return jpaRepository.findByPasteurIdIsNull()
                 .stream()
-                .filter(e -> e.getPasteurId() == null)
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }

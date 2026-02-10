@@ -68,14 +68,13 @@ public class EgliseMaisonRepositoryAdapter implements EgliseMaisonRepository {
 
     @Override
     public long countByEgliseLocaleId(UUID egliseLocaleId) {
-        return jpaRepository.findByEgliseLocaleId(egliseLocaleId).size();
+        return jpaRepository.countByEgliseLocaleId(egliseLocaleId);
     }
 
     @Override
     public List<EgliseMaison> findByLeaderIdIsNull() {
-        return jpaRepository.findAll()
+        return jpaRepository.findByLeaderIdIsNull()
                 .stream()
-                .filter(e -> e.getLeaderId() == null)
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }

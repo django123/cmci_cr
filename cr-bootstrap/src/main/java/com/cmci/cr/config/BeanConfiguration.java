@@ -2,6 +2,7 @@ package com.cmci.cr.config;
 
 import com.cmci.cr.application.usecase.*;
 import com.cmci.cr.domain.event.DomainEventPublisher;
+import com.cmci.cr.domain.port.CountryDataPort;
 import com.cmci.cr.domain.port.IdentityProviderPort;
 import com.cmci.cr.domain.repository.CommentaireRepository;
 import com.cmci.cr.domain.repository.CompteRenduRepository;
@@ -273,6 +274,16 @@ public class BeanConfiguration {
             EgliseLocaleRepository egliseLocaleRepository,
             EgliseMaisonRepository egliseMaisonRepository) {
         return new DeleteEgliseLocaleUseCase(egliseLocaleRepository, egliseMaisonRepository);
+    }
+
+    // ===== Geography Seed Use Case =====
+
+    @Bean
+    public SeedGeographyUseCase seedGeographyUseCase(
+            CountryDataPort countryDataPort,
+            RegionRepository regionRepository,
+            ZoneRepository zoneRepository) {
+        return new SeedGeographyUseCase(countryDataPort, regionRepository, zoneRepository);
     }
 
     // ===== EgliseMaison Use Cases =====

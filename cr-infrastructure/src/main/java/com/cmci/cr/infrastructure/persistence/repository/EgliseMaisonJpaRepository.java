@@ -15,22 +15,22 @@ import java.util.UUID;
 public interface EgliseMaisonJpaRepository extends JpaRepository<EgliseMaisonJpaEntity, UUID> {
 
     /**
-     * Trouve une église de maison par son code
-     */
-    Optional<EgliseMaisonJpaEntity> findByCode(String code);
-
-    /**
      * Trouve toutes les églises de maison d'une église locale
      */
     List<EgliseMaisonJpaEntity> findByEgliseLocaleId(UUID egliseLocaleId);
 
     /**
-     * Vérifie si un code existe déjà
+     * Compte les églises de maison d'une église locale
      */
-    boolean existsByCode(String code);
+    long countByEgliseLocaleId(UUID egliseLocaleId);
 
     /**
      * Trouve l'église de maison dirigée par un leader
      */
     List<EgliseMaisonJpaEntity> findByLeaderId(UUID leaderId);
+
+    /**
+     * Trouve les églises de maison sans leader
+     */
+    List<EgliseMaisonJpaEntity> findByLeaderIdIsNull();
 }

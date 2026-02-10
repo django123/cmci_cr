@@ -28,9 +28,6 @@ public class ZoneJpaEntity {
     @Column(name = "nom", nullable = false, length = 100)
     private String nom;
 
-    @Column(name = "code", nullable = false, unique = true, length = 10)
-    private String code;
-
     @Column(name = "region_id", nullable = false)
     private UUID regionId;
 

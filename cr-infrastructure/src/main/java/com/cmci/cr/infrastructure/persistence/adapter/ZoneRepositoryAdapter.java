@@ -59,6 +59,6 @@ public class ZoneRepositoryAdapter implements ZoneRepository {
 
     @Override
     public long countByRegionId(UUID regionId) {
-        return jpaRepository.findByRegionId(regionId).size();
+        return jpaRepository.countByRegionId(regionId);
     }
 }

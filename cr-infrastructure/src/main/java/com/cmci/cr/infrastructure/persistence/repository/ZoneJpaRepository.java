@@ -15,17 +15,12 @@ import java.util.UUID;
 public interface ZoneJpaRepository extends JpaRepository<ZoneJpaEntity, UUID> {
 
     /**
-     * Trouve une zone par son code
-     */
-    Optional<ZoneJpaEntity> findByCode(String code);
-
-    /**
      * Trouve toutes les zones d'une région
      */
     List<ZoneJpaEntity> findByRegionId(UUID regionId);
 
     /**
-     * Vérifie si un code existe déjà
+     * Compte les zones d'une région
      */
-    boolean existsByCode(String code);
+    long countByRegionId(UUID regionId);
 }

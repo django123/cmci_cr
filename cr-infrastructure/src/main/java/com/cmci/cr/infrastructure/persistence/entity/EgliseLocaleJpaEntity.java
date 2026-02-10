@@ -25,11 +25,8 @@ public class EgliseLocaleJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "nom", nullable = false, length = 100)
+    @Column(name = "nom", nullable = false, length = 200)
     private String nom;
-
-    @Column(name = "code", nullable = false, unique = true, length = 10)
-    private String code;
 
     @Column(name = "zone_id", nullable = false)
     private UUID zoneId;
