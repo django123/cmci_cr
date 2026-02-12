@@ -1,5 +1,6 @@
 package com.cmci.cr.config;
 
+import com.cmci.cr.application.service.ExportService;
 import com.cmci.cr.application.usecase.*;
 import com.cmci.cr.domain.event.DomainEventPublisher;
 import com.cmci.cr.domain.port.CountryDataPort;
@@ -132,6 +133,31 @@ public class BeanConfiguration {
             StatisticsService statisticsService) {
         return new GetGroupStatisticsUseCase(
                 utilisateurRepository, compteRenduRepository, statisticsService);
+    }
+
+    // ===== Export Use Cases (US4.4) =====
+
+    @Bean
+    public ExportService exportService() {
+        return new ExportService();
+    }
+
+    @Bean
+    public ExportPersonalStatsUseCase exportPersonalStatsUseCase(
+            GetPersonalStatisticsUseCase getPersonalStatisticsUseCase,
+            UtilisateurRepository utilisateurRepository,
+            ExportService exportService) {
+        return new ExportPersonalStatsUseCase(
+                getPersonalStatisticsUseCase, utilisateurRepository, exportService);
+    }
+
+    @Bean
+    public ExportGroupStatsUseCase exportGroupStatsUseCase(
+            GetGroupStatisticsUseCase getGroupStatisticsUseCase,
+            UtilisateurRepository utilisateurRepository,
+            ExportService exportService) {
+        return new ExportGroupStatsUseCase(
+                getGroupStatisticsUseCase, utilisateurRepository, exportService);
     }
 
     // ===== Utilisateur Use Cases =====
