@@ -1,0 +1,80 @@
+### =============================================
+### SUBORDONNES (Visibilité hiérarchique)
+### Requires: FD, LEADER, PASTEUR or ADMIN token
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FD
+# @name loginFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{loginFD.response.body.access_token}}
+
+### Obtenir token PASTEUR
+# @name loginPasteur
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=pasteur.test@cmci.org&password=test123&scope=openid
+
+###
+
+@pasteurToken = {{loginPasteur.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. CR des subordonnés (FD voit ses disciples)
+### -----------------------------------------------
+# @name getSubordinatesCR_FD
+GET {{baseUrl}}/subordinates/cr?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 2. CR des subordonnés (PASTEUR voit tout)
+### -----------------------------------------------
+# @name getSubordinatesCR_Pasteur
+GET {{baseUrl}}/subordinates/cr?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{pasteurToken}}
+
+### -----------------------------------------------
+### 3. Résumé des CR des subordonnés
+### -----------------------------------------------
+# @name getSubordinatesSummary
+GET {{baseUrl}}/subordinates/cr/summary?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 4. Statistiques des subordonnés
+### -----------------------------------------------
+# @name getSubordinatesStatistics
+GET {{baseUrl}}/subordinates/statistics?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 5. Statut des disciples
+### -----------------------------------------------
+# @name getDisciplesStatus
+GET {{baseUrl}}/subordinates/disciples
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 6. Erreur: FIDELE tente d'accéder aux subordonnés
+### Attendu: 403 Forbidden
+### -----------------------------------------------
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+GET {{baseUrl}}/subordinates/cr?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{loginFidele.response.body.access_token}}

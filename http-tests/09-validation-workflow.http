@@ -1,0 +1,149 @@
+### =============================================
+### WORKFLOW DE VALIDATION DES COMPTES RENDUS
+### Cycle: BROUILLON -> SOUMIS -> VALIDE
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FIDELE
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fideleToken = {{loginFidele.response.body.access_token}}
+
+### Obtenir token FD
+# @name loginFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{loginFD.response.body.access_token}}
+
+### -----------------------------------------------
+### ÉTAPE 1: FIDELE crée un CR (statut = BROUILLON)
+### -----------------------------------------------
+# @name step1_createCR
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-18",
+  "rdqd": "3/5",
+  "priereSeuleMinutes": 45,
+  "confession": true,
+  "jeune": false,
+  "offrande": true,
+  "notes": "CR pour test workflow"
+}
+
+### -----------------------------------------------
+### ÉTAPE 2: Vérifier le statut BROUILLON
+### -----------------------------------------------
+# @name step2_verifyCR
+GET {{baseUrl}}/cr/{{step1_createCR.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### ÉTAPE 3: FIDELE soumet le CR (BROUILLON -> SOUMIS)
+### -----------------------------------------------
+# @name step3_submitCR
+POST {{baseUrl}}/cr/{{step1_createCR.response.body.id}}/submit
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{}
+
+### -----------------------------------------------
+### ÉTAPE 4: Vérifier le statut SOUMIS
+### -----------------------------------------------
+# @name step4_verifySubmitted
+GET {{baseUrl}}/cr/{{step1_createCR.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### ÉTAPE 5: Erreur - FIDELE tente de soumettre à nouveau
+### Attendu: 400 ou 409
+### -----------------------------------------------
+# @name step5_resubmitError
+POST {{baseUrl}}/cr/{{step1_createCR.response.body.id}}/submit
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{}
+
+### -----------------------------------------------
+### ÉTAPE 6: Erreur - FIDELE tente de modifier un CR SOUMIS
+### Attendu: 400
+### -----------------------------------------------
+# @name step6_editSubmittedError
+PUT {{baseUrl}}/cr/{{step1_createCR.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "rdqd": "5/5",
+  "priereSeuleMinutes": 100
+}
+
+### -----------------------------------------------
+### ÉTAPE 7: FD valide le CR (SOUMIS -> VALIDE)
+### -----------------------------------------------
+# @name step7_validateCR
+POST {{baseUrl}}/cr/{{step1_createCR.response.body.id}}/validate
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### -----------------------------------------------
+### ÉTAPE 8: Vérifier le statut VALIDE
+### -----------------------------------------------
+# @name step8_verifyValidated
+GET {{baseUrl}}/cr/{{step1_createCR.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### ÉTAPE 9: Erreur - Tenter de re-valider un CR VALIDE
+### Attendu: 400 ou 409
+### -----------------------------------------------
+# @name step9_revalidateError
+POST {{baseUrl}}/cr/{{step1_createCR.response.body.id}}/validate
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### -----------------------------------------------
+### ÉTAPE 10: Erreur - Modifier un CR VALIDE
+### Attendu: 400
+### -----------------------------------------------
+# @name step10_editValidatedError
+PUT {{baseUrl}}/cr/{{step1_createCR.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "rdqd": "5/5"
+}
+
+### -----------------------------------------------
+### ÉTAPE 11: FD marque un CR comme vu
+### -----------------------------------------------
+# @name step11_markViewed
+POST {{baseUrl}}/cr/{{step1_createCR.response.body.id}}/mark-viewed
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}

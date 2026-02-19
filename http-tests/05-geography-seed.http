@@ -1,0 +1,59 @@
+### =============================================
+### SEED GEOGRAPHIE
+### Initialise la hiérarchie géographique complète
+### Requires: ADMIN token
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Seed géographie (crée régions, zones, églises)
+### -----------------------------------------------
+# @name seedGeography
+POST {{baseUrl}}/admin/geography/seed
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{}
+
+### -----------------------------------------------
+### 2. Vérifier les régions après seed
+### -----------------------------------------------
+# @name verifyRegions
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 3. Vérifier les zones après seed
+### -----------------------------------------------
+# @name verifyZones
+GET {{baseUrl}}/admin/zones
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Vérifier les églises locales après seed
+### -----------------------------------------------
+# @name verifyEglisesLocales
+GET {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 5. Vérifier les églises de maison après seed
+### -----------------------------------------------
+# @name verifyEglisesMaison
+GET {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{token}}

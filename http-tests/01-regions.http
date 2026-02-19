@@ -1,0 +1,121 @@
+### =============================================
+### CRUD REGIONS
+### Requires: PASTEUR or ADMIN token
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Lister toutes les régions
+### -----------------------------------------------
+# @name getAllRegions
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 2. Créer une région
+### -----------------------------------------------
+# @name createRegion
+POST {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Centre",
+  "code": "CTR"
+}
+
+### -----------------------------------------------
+### 3. Obtenir une région par ID
+### -----------------------------------------------
+# @name getRegionById
+GET {{baseUrl}}/admin/regions/{{createRegion.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Obtenir une région par code
+### -----------------------------------------------
+# @name getRegionByCode
+GET {{baseUrl}}/admin/regions/code/CTR
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 5. Modifier une région
+### -----------------------------------------------
+# @name updateRegion
+PUT {{baseUrl}}/admin/regions/{{createRegion.response.body.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Centre Modifié",
+  "code": "CTR"
+}
+
+### -----------------------------------------------
+### 6. Créer une deuxième région
+### -----------------------------------------------
+# @name createRegion2
+POST {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Littoral",
+  "code": "LTR"
+}
+
+### -----------------------------------------------
+### 7. Erreur: Créer une région avec code dupliqué
+### Attendu: 409 Conflict
+### -----------------------------------------------
+# @name createRegionDuplicate
+POST {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Centre Bis",
+  "code": "CTR"
+}
+
+### -----------------------------------------------
+### 8. Supprimer une région
+### -----------------------------------------------
+# @name deleteRegion2
+DELETE {{baseUrl}}/admin/regions/{{createRegion2.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 9. Erreur: Accès sans token
+### Attendu: 401 Unauthorized
+### -----------------------------------------------
+GET {{baseUrl}}/admin/regions
+
+### -----------------------------------------------
+### 10. Erreur: Accès avec token FIDELE
+### Attendu: 403 Forbidden
+### -----------------------------------------------
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{loginFidele.response.body.access_token}}

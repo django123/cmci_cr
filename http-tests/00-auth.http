@@ -1,0 +1,72 @@
+### =============================================
+### AUTHENTIFICATION KEYCLOAK
+### Obtenir des tokens JWT pour chaque rôle
+### =============================================
+
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+@tokenUrl = {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+
+### -----------------------------------------------
+### 1. Token ADMIN
+### -----------------------------------------------
+# @name loginAdmin
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+### -----------------------------------------------
+### 2. Token PASTEUR
+### -----------------------------------------------
+# @name loginPasteur
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=pasteur.test@cmci.org&password=test123&scope=openid
+
+### -----------------------------------------------
+### 3. Token FD (Faiseur de Disciples)
+### -----------------------------------------------
+# @name loginFD
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+### -----------------------------------------------
+### 4. Token FIDELE
+### -----------------------------------------------
+# @name loginFidele
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+### -----------------------------------------------
+### 5. Token LEADER
+### -----------------------------------------------
+# @name loginLeader
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=leader.test@cmci.org&password=test123&scope=openid
+
+### -----------------------------------------------
+### 6. Vérifier le token (introspect)
+### -----------------------------------------------
+# @name introspectToken
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token/introspect
+Content-Type: application/x-www-form-urlencoded
+
+token={{loginAdmin.response.body.access_token}}&client_id={{clientId}}
+
+### -----------------------------------------------
+### 7. Refresh token
+### -----------------------------------------------
+# @name refreshToken
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&client_id={{clientId}}&refresh_token={{loginAdmin.response.body.refresh_token}}

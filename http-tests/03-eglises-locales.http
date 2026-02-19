@@ -1,0 +1,83 @@
+### =============================================
+### CRUD EGLISES LOCALES
+### Requires: PASTEUR or ADMIN token
+### Prérequis: Avoir créé une zone (02-zones.http)
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Lister toutes les églises locales
+### -----------------------------------------------
+# @name getAllEglisesLocales
+GET {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 2. Créer une église locale
+### (Remplacer zoneId par un ID valide)
+### -----------------------------------------------
+# @name createEgliseLocale
+POST {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise Locale Yaoundé Centre",
+  "zoneId": "REPLACE_WITH_ZONE_ID",
+  "adresse": "Rue de la Paix, Yaoundé"
+}
+
+### -----------------------------------------------
+### 3. Obtenir une église locale par ID
+### -----------------------------------------------
+# @name getEgliseLocaleById
+GET {{baseUrl}}/admin/eglises-locales/{{createEgliseLocale.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Modifier une église locale (ajouter pasteur)
+### -----------------------------------------------
+# @name updateEgliseLocale
+PUT {{baseUrl}}/admin/eglises-locales/{{createEgliseLocale.response.body.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise Locale Yaoundé Centre Modifiée",
+  "adresse": "Nouveau quartier, Yaoundé",
+  "pasteurId": "REPLACE_WITH_PASTEUR_USER_ID"
+}
+
+### -----------------------------------------------
+### 5. Supprimer une église locale
+### -----------------------------------------------
+# @name deleteEgliseLocale
+DELETE {{baseUrl}}/admin/eglises-locales/{{createEgliseLocale.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 6. Erreur: Créer sans zoneId
+### Attendu: 400 Bad Request
+### -----------------------------------------------
+POST {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise Sans Zone"
+}

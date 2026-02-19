@@ -1,0 +1,95 @@
+### =============================================
+### STATISTIQUES
+### Requires: token valide
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FIDELE
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fideleToken = {{loginFidele.response.body.access_token}}
+
+### Obtenir token FD
+# @name loginFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{loginFD.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Statistiques personnelles (FIDELE)
+### -----------------------------------------------
+# @name personalStats
+GET {{baseUrl}}/statistics/personal?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 2. Statistiques personnelles (FD)
+### -----------------------------------------------
+# @name personalStatsFD
+GET {{baseUrl}}/statistics/personal?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 3. Statistiques d'un utilisateur spécifique
+### (Remplacer userId par un ID valide)
+### -----------------------------------------------
+# @name userStats
+GET {{baseUrl}}/statistics/user/REPLACE_WITH_USER_ID?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 4. Statistiques personnelles - période large (année)
+### -----------------------------------------------
+# @name personalStatsYear
+GET {{baseUrl}}/statistics/personal?startDate=2026-01-01&endDate=2026-12-31
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 5. Export statistiques personnelles en PDF
+### -----------------------------------------------
+# @name exportPersonalPDF
+GET {{baseUrl}}/statistics/personal/export?startDate=2026-02-01&endDate=2026-02-28&format=pdf
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 6. Export statistiques personnelles en Excel
+### -----------------------------------------------
+# @name exportPersonalExcel
+GET {{baseUrl}}/statistics/personal/export?startDate=2026-02-01&endDate=2026-02-28&format=excel
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 7. Export statistiques de groupe en PDF
+### -----------------------------------------------
+# @name exportGroupPDF
+GET {{baseUrl}}/statistics/group/export?startDate=2026-02-01&endDate=2026-02-28&format=pdf
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 8. Export statistiques de groupe en Excel
+### -----------------------------------------------
+# @name exportGroupExcel
+GET {{baseUrl}}/statistics/group/export?startDate=2026-02-01&endDate=2026-02-28&format=excel
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 9. Erreur: Statistiques sans dates
+### Attendu: 400 Bad Request
+### -----------------------------------------------
+GET {{baseUrl}}/statistics/personal
+Authorization: Bearer {{fideleToken}}

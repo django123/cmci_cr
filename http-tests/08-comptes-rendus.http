@@ -1,0 +1,144 @@
+### =============================================
+### CRUD COMPTES RENDUS
+### Requires: token valide (tout rôle pour ses propres CR)
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FIDELE
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fideleToken = {{loginFidele.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Créer un CR complet
+### -----------------------------------------------
+# @name createCRComplet
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-15",
+  "rdqd": "3/5",
+  "priereSeuleMinutes": 45,
+  "priereCoupleMinutes": 20,
+  "priereAvecEnfantsMinutes": 15,
+  "lectureBiblique": 3,
+  "livreBiblique": "Matthieu",
+  "litteraturePages": 10,
+  "litteratureTotal": 200,
+  "litteratureTitre": "La marche chrétienne",
+  "priereAutres": 2,
+  "confession": true,
+  "jeune": true,
+  "typeJeune": "Complet",
+  "evangelisation": 2,
+  "offrande": true,
+  "notes": "Bon jour de marche spirituelle"
+}
+
+### -----------------------------------------------
+### 2. Créer un CR minimal
+### -----------------------------------------------
+# @name createCRMinimal
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-16",
+  "rdqd": "1/2",
+  "priereSeuleMinutes": 15
+}
+
+### -----------------------------------------------
+### 3. Obtenir un CR par ID
+### -----------------------------------------------
+# @name getCRById
+GET {{baseUrl}}/cr/{{createCRComplet.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 4. Obtenir les CR de l'utilisateur connecté
+### (Remplacer userId par l'ID de l'utilisateur)
+### -----------------------------------------------
+# @name getCRByUser
+GET {{baseUrl}}/cr/user/REPLACE_WITH_USER_ID
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 5. Obtenir les CR par période
+### -----------------------------------------------
+# @name getCRByPeriod
+GET {{baseUrl}}/cr/user/REPLACE_WITH_USER_ID/period?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 6. Modifier un CR (avant soumission)
+### -----------------------------------------------
+# @name updateCR
+PUT {{baseUrl}}/cr/{{createCRComplet.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-15",
+  "rdqd": "4/5",
+  "priereSeuleMinutes": 60,
+  "confession": true,
+  "jeune": true,
+  "typeJeune": "Complet",
+  "offrande": true,
+  "notes": "Journée améliorée"
+}
+
+### -----------------------------------------------
+### 7. Erreur: Créer un CR pour une date déjà existante
+### Attendu: 409 Conflict
+### -----------------------------------------------
+# @name createCRDuplicate
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-15",
+  "rdqd": "1/1",
+  "priereSeuleMinutes": 10
+}
+
+### -----------------------------------------------
+### 8. Erreur: Créer un CR sans champs obligatoires
+### Attendu: 400 Bad Request
+### -----------------------------------------------
+# @name createCRInvalid
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "notes": "Pas assez d'informations"
+}
+
+### -----------------------------------------------
+### 9. Supprimer un CR (BROUILLON seulement)
+### -----------------------------------------------
+# @name deleteCR
+DELETE {{baseUrl}}/cr/{{createCRMinimal.response.body.id}}
+Authorization: Bearer {{fideleToken}}
+
+### -----------------------------------------------
+### 10. Erreur: Accès sans token
+### Attendu: 401 Unauthorized
+### -----------------------------------------------
+GET {{baseUrl}}/cr

@@ -1,0 +1,107 @@
+### =============================================
+### COMMENTAIRES SUR LES COMPTES RENDUS
+### Requires: token valide
+### Prérequis: Avoir un CR existant
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FD
+# @name loginFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{loginFD.response.body.access_token}}
+
+### Obtenir token FIDELE
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fideleToken = {{loginFidele.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Ajouter un commentaire sur un CR (en tant que FD)
+### (Remplacer crId par un ID valide)
+### -----------------------------------------------
+# @name addCommentFD
+POST {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{
+  "contenu": "Bon travail ! Continue ainsi dans ta marche quotidienne."
+}
+
+### -----------------------------------------------
+### 2. Ajouter un commentaire sur un CR (en tant que FIDELE)
+### -----------------------------------------------
+# @name addCommentFidele
+POST {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "contenu": "Merci pour l'encouragement !"
+}
+
+### -----------------------------------------------
+### 3. Lister les commentaires d'un CR
+### -----------------------------------------------
+# @name getCommentsByCR
+GET {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 4. Ajouter un deuxième commentaire
+### -----------------------------------------------
+# @name addSecondComment
+POST {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{
+  "contenu": "N'oublie pas d'augmenter ton temps de prière cette semaine."
+}
+
+### -----------------------------------------------
+### 5. Re-lister les commentaires (devrait en avoir 3)
+### -----------------------------------------------
+# @name getCommentsAfterAdd
+GET {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 6. Erreur: Commentaire vide
+### Attendu: 400 Bad Request
+### -----------------------------------------------
+POST {{baseUrl}}/cr/REPLACE_WITH_CR_ID/commentaires
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{
+  "contenu": ""
+}
+
+### -----------------------------------------------
+### 7. Erreur: CR inexistant
+### Attendu: 404 Not Found
+### -----------------------------------------------
+POST {{baseUrl}}/cr/00000000-0000-0000-0000-000000000000/commentaires
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{
+  "contenu": "Commentaire sur CR inexistant"
+}

@@ -1,0 +1,104 @@
+### =============================================
+### ADMINISTRATION UTILISATEURS
+### Requires: PASTEUR or ADMIN token
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Lister tous les utilisateurs
+### -----------------------------------------------
+# @name getAllUsers
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 2. Obtenir un utilisateur par ID
+### (Remplacer par un ID valide)
+### -----------------------------------------------
+# @name getUserById
+GET {{baseUrl}}/admin/users/REPLACE_WITH_USER_ID
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 3. Lister les utilisateurs par rôle FIDELE
+### -----------------------------------------------
+# @name getUsersByRoleFidele
+GET {{baseUrl}}/admin/users/role/FIDELE
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Lister les utilisateurs par rôle FD
+### -----------------------------------------------
+# @name getUsersByRoleFD
+GET {{baseUrl}}/admin/users/role/FD
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 5. Lister les utilisateurs par rôle PASTEUR
+### -----------------------------------------------
+# @name getUsersByRolePasteur
+GET {{baseUrl}}/admin/users/role/PASTEUR
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 6. Rechercher un utilisateur
+### -----------------------------------------------
+# @name searchUsers
+GET {{baseUrl}}/admin/users/search?q=test
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 7. Obtenir les utilisateurs en attente
+### -----------------------------------------------
+# @name getPendingUsers
+GET {{baseUrl}}/admin/users/pending
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 8. Assigner le rôle FD à un utilisateur
+### (Remplacer l'ID par un ID valide)
+### -----------------------------------------------
+# @name assignRoleFD
+PUT {{baseUrl}}/admin/users/REPLACE_WITH_USER_ID/role
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role": "FD"
+}
+
+### -----------------------------------------------
+### 9. Statistiques des utilisateurs par rôle
+### -----------------------------------------------
+# @name getUserStatistics
+GET {{baseUrl}}/admin/users/statistics
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 10. Erreur: Accès FIDELE
+### Attendu: 403 Forbidden
+### -----------------------------------------------
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{loginFidele.response.body.access_token}}

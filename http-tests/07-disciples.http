@@ -1,0 +1,95 @@
+### =============================================
+### GESTION DES DISCIPLES
+### Requires: FD, LEADER, PASTEUR or ADMIN token
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token FD
+# @name loginFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{loginFD.response.body.access_token}}
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@adminToken = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Obtenir mes disciples (en tant que FD)
+### -----------------------------------------------
+# @name getMyDisciples
+GET {{baseUrl}}/disciples/my-disciples
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 2. Obtenir les disciples non assignés
+### -----------------------------------------------
+# @name getUnassigned
+GET {{baseUrl}}/disciples/unassigned
+Authorization: Bearer {{fdToken}}
+
+### -----------------------------------------------
+### 3. Assigner un disciple à un FD
+### (Remplacer discipleId et fdId par des IDs valides)
+### -----------------------------------------------
+# @name assignDisciple
+POST {{baseUrl}}/disciples/REPLACE_WITH_DISCIPLE_ID/assign-fd
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "fdId": "REPLACE_WITH_FD_ID"
+}
+
+### -----------------------------------------------
+### 4. Obtenir les disciples d'un FD spécifique
+### (Remplacer fdId par un ID valide)
+### -----------------------------------------------
+# @name getDisciplesByFD
+GET {{baseUrl}}/disciples/fd/REPLACE_WITH_FD_ID
+Authorization: Bearer {{adminToken}}
+
+### -----------------------------------------------
+### 5. Compter les disciples d'un FD
+### -----------------------------------------------
+# @name countDisciplesByFD
+GET {{baseUrl}}/disciples/count/fd/REPLACE_WITH_FD_ID
+Authorization: Bearer {{adminToken}}
+
+### -----------------------------------------------
+### 6. Retirer un disciple de son FD
+### (Remplacer discipleId par un ID valide)
+### -----------------------------------------------
+# @name removeDisciple
+DELETE {{baseUrl}}/disciples/REPLACE_WITH_DISCIPLE_ID/fd
+Authorization: Bearer {{adminToken}}
+
+### -----------------------------------------------
+### 7. Erreur: FIDELE tente d'accéder
+### Attendu: 403 Forbidden
+### -----------------------------------------------
+# @name loginFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+GET {{baseUrl}}/disciples/my-disciples
+Authorization: Bearer {{loginFidele.response.body.access_token}}

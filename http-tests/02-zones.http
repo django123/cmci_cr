@@ -1,0 +1,98 @@
+### =============================================
+### CRUD ZONES
+### Requires: PASTEUR or ADMIN token
+### Prérequis: Avoir créé une région (01-regions.http)
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### Lister les régions pour obtenir un ID
+# @name getRegions
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 1. Lister toutes les zones
+### -----------------------------------------------
+# @name getAllZones
+GET {{baseUrl}}/admin/zones
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 2. Créer une zone
+### (Remplacer regionId par un ID valide)
+### -----------------------------------------------
+# @name createZone
+POST {{baseUrl}}/admin/zones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Zone Nord",
+  "regionId": "REPLACE_WITH_REGION_ID"
+}
+
+### -----------------------------------------------
+### 3. Obtenir une zone par ID
+### -----------------------------------------------
+# @name getZoneById
+GET {{baseUrl}}/admin/zones/{{createZone.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Modifier une zone
+### -----------------------------------------------
+# @name updateZone
+PUT {{baseUrl}}/admin/zones/{{createZone.response.body.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Zone Nord Modifiée"
+}
+
+### -----------------------------------------------
+### 5. Créer une deuxième zone
+### -----------------------------------------------
+# @name createZone2
+POST {{baseUrl}}/admin/zones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Zone Sud",
+  "regionId": "REPLACE_WITH_REGION_ID"
+}
+
+### -----------------------------------------------
+### 6. Supprimer une zone
+### -----------------------------------------------
+# @name deleteZone2
+DELETE {{baseUrl}}/admin/zones/{{createZone2.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 7. Erreur: Créer zone sans regionId
+### Attendu: 400 Bad Request
+### -----------------------------------------------
+POST {{baseUrl}}/admin/zones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Zone Sans Région"
+}

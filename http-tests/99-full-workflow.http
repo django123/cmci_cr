@@ -1,0 +1,495 @@
+### =============================================================
+### WORKFLOW COMPLET A-Z - TEST END-TO-END DE TOUTE L'API
+### =============================================================
+###
+### Ce fichier teste le scénario complet de l'application:
+### 1. Authentification multi-rôles
+### 2. Création hiérarchie géographique
+### 3. Gestion utilisateurs et disciples
+### 4. CRUD Comptes Rendus
+### 5. Workflow de validation
+### 6. Commentaires
+### 7. Statistiques
+###
+### Exécuter les requêtes séquentiellement (de haut en bas)
+### =============================================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### =============================================================
+### PHASE 1: AUTHENTIFICATION
+### =============================================================
+
+### 1.1 - Obtenir token ADMIN
+# @name authAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@adminToken = {{authAdmin.response.body.access_token}}
+
+### 1.2 - Obtenir token PASTEUR
+# @name authPasteur
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=pasteur.test@cmci.org&password=test123&scope=openid
+
+###
+
+@pasteurToken = {{authPasteur.response.body.access_token}}
+
+### 1.3 - Obtenir token FD
+# @name authFD
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fd.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fdToken = {{authFD.response.body.access_token}}
+
+### 1.4 - Obtenir token FIDELE
+# @name authFidele
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=fidele.test@cmci.org&password=test123&scope=openid
+
+###
+
+@fideleToken = {{authFidele.response.body.access_token}}
+
+### =============================================================
+### PHASE 2: CREATION HIERARCHIE GEOGRAPHIQUE
+### =============================================================
+
+### 2.1 - Créer la Région "Centre"
+# @name createRegion
+POST {{baseUrl}}/admin/regions
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nom": "Centre",
+  "code": "CTR"
+}
+
+###
+
+@regionId = {{createRegion.response.body.id}}
+
+### 2.2 - Vérifier la région créée
+# @name verifyRegion
+GET {{baseUrl}}/admin/regions/{{regionId}}
+Authorization: Bearer {{adminToken}}
+
+### 2.3 - Créer la Zone "Zone Nord" dans Centre
+# @name createZone
+POST {{baseUrl}}/admin/zones
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nom": "Zone Nord",
+  "regionId": "{{regionId}}"
+}
+
+###
+
+@zoneId = {{createZone.response.body.id}}
+
+### 2.4 - Créer l'Église Locale
+# @name createEgliseLocale
+POST {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise Locale Yaoundé Centre",
+  "zoneId": "{{zoneId}}",
+  "adresse": "Rue de la Paix, Yaoundé"
+}
+
+###
+
+@egliseLocaleId = {{createEgliseLocale.response.body.id}}
+
+### 2.5 - Créer l'Église de Maison
+# @name createEgliseMaison
+POST {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise de Maison Bastos",
+  "egliseLocaleId": "{{egliseLocaleId}}",
+  "adresse": "Quartier Bastos, Yaoundé"
+}
+
+###
+
+@egliseMaisonId = {{createEgliseMaison.response.body.id}}
+
+### 2.6 - Vérifier la hiérarchie complète
+# @name verifyHierarchyRegions
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{adminToken}}
+
+###
+# @name verifyHierarchyZones
+GET {{baseUrl}}/admin/zones
+Authorization: Bearer {{adminToken}}
+
+###
+# @name verifyHierarchyEglisesLocales
+GET {{baseUrl}}/admin/eglises-locales
+Authorization: Bearer {{adminToken}}
+
+###
+# @name verifyHierarchyEglisesMaison
+GET {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{adminToken}}
+
+### =============================================================
+### PHASE 3: GESTION UTILISATEURS
+### =============================================================
+
+### 3.1 - Lister tous les utilisateurs
+# @name listAllUsers
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{adminToken}}
+
+### 3.2 - Lister les utilisateurs par rôle FIDELE
+# @name listFideles
+GET {{baseUrl}}/admin/users/role/FIDELE
+Authorization: Bearer {{adminToken}}
+
+### 3.3 - Lister les FDs
+# @name listFDs
+GET {{baseUrl}}/admin/users/role/FD
+Authorization: Bearer {{adminToken}}
+
+### 3.4 - Statistiques des utilisateurs
+# @name userStats
+GET {{baseUrl}}/admin/users/statistics
+Authorization: Bearer {{adminToken}}
+
+### 3.5 - Recherche d'utilisateur
+# @name searchUser
+GET {{baseUrl}}/admin/users/search?q=fidele
+Authorization: Bearer {{adminToken}}
+
+### =============================================================
+### PHASE 4: GESTION DES DISCIPLES
+### =============================================================
+
+### 4.1 - Lister les disciples non assignés
+# @name unassignedDisciples
+GET {{baseUrl}}/disciples/unassigned
+Authorization: Bearer {{fdToken}}
+
+### 4.2 - Lister mes disciples (en tant que FD)
+# @name myDisciples
+GET {{baseUrl}}/disciples/my-disciples
+Authorization: Bearer {{fdToken}}
+
+### 4.3 - Assigner un disciple au FD
+### (Remplacer DISCIPLE_ID et FD_ID par les vrais IDs obtenus ci-dessus)
+# @name assignDisciple1
+POST {{baseUrl}}/disciples/REPLACE_DISCIPLE_ID/assign-fd
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "fdId": "REPLACE_FD_ID"
+}
+
+### 4.4 - Vérifier que le disciple est bien assigné
+# @name verifyMyDisciples
+GET {{baseUrl}}/disciples/my-disciples
+Authorization: Bearer {{fdToken}}
+
+### 4.5 - Compter les disciples du FD
+# @name countDisciples
+GET {{baseUrl}}/disciples/count/fd/REPLACE_FD_ID
+Authorization: Bearer {{adminToken}}
+
+### =============================================================
+### PHASE 5: CREATION DES COMPTES RENDUS
+### =============================================================
+
+### 5.1 - Fidèle crée un CR complet
+# @name createCR1
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-15",
+  "rdqd": "3/5",
+  "priereSeuleMinutes": 45,
+  "priereCoupleMinutes": 20,
+  "priereAvecEnfantsMinutes": 15,
+  "lectureBiblique": 3,
+  "livreBiblique": "Matthieu",
+  "litteraturePages": 10,
+  "litteratureTotal": 200,
+  "litteratureTitre": "La marche chrétienne",
+  "priereAutres": 2,
+  "confession": true,
+  "jeune": true,
+  "typeJeune": "Complet",
+  "evangelisation": 2,
+  "offrande": true,
+  "notes": "Excellente journée de marche spirituelle"
+}
+
+###
+
+@cr1Id = {{createCR1.response.body.id}}
+
+### 5.2 - Fidèle crée un CR minimal
+# @name createCR2
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-16",
+  "rdqd": "1/2",
+  "priereSeuleMinutes": 15
+}
+
+###
+
+@cr2Id = {{createCR2.response.body.id}}
+
+### 5.3 - Fidèle crée un CR avec jeûne
+# @name createCR3
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-17",
+  "rdqd": "2/3",
+  "priereSeuleMinutes": 30,
+  "confession": false,
+  "jeune": true,
+  "typeJeune": "Partiel",
+  "offrande": false,
+  "notes": "Journée de jeûne"
+}
+
+###
+
+@cr3Id = {{createCR3.response.body.id}}
+
+### 5.4 - Vérifier le CR créé
+# @name verifyCR1
+GET {{baseUrl}}/cr/{{cr1Id}}
+Authorization: Bearer {{fideleToken}}
+
+### 5.5 - Erreur: CR en double pour la même date
+### Attendu: 409 Conflict
+# @name createCRDuplicate
+POST {{baseUrl}}/cr
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "date": "2026-02-15",
+  "rdqd": "1/1",
+  "priereSeuleMinutes": 5
+}
+
+### =============================================================
+### PHASE 6: WORKFLOW DE VALIDATION
+### =============================================================
+
+### 6.1 - Soumettre le CR1 (BROUILLON -> SOUMIS)
+# @name submitCR1
+POST {{baseUrl}}/cr/{{cr1Id}}/submit
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{}
+
+### 6.2 - Soumettre le CR2
+# @name submitCR2
+POST {{baseUrl}}/cr/{{cr2Id}}/submit
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{}
+
+### 6.3 - Soumettre le CR3
+# @name submitCR3
+POST {{baseUrl}}/cr/{{cr3Id}}/submit
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{}
+
+### 6.4 - Vérifier les statuts (tous SOUMIS)
+# @name verifyCR1Submitted
+GET {{baseUrl}}/cr/{{cr1Id}}
+Authorization: Bearer {{fideleToken}}
+
+### 6.5 - FD voit les CR de ses subordonnés
+# @name fdSeesCRs
+GET {{baseUrl}}/subordinates/cr?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### 6.6 - FD valide le CR1 (SOUMIS -> VALIDE)
+# @name validateCR1
+POST {{baseUrl}}/cr/{{cr1Id}}/validate
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### 6.7 - FD valide le CR2
+# @name validateCR2
+POST {{baseUrl}}/cr/{{cr2Id}}/validate
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### 6.8 - FD marque le CR3 comme vu
+# @name markCR3Viewed
+POST {{baseUrl}}/cr/{{cr3Id}}/mark-viewed
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### 6.9 - Erreur: Re-valider un CR déjà validé
+### Attendu: 400 ou 409
+# @name revalidateCR1Error
+POST {{baseUrl}}/cr/{{cr1Id}}/validate
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{}
+
+### 6.10 - Erreur: Modifier un CR validé
+### Attendu: 400
+# @name editValidatedCRError
+PUT {{baseUrl}}/cr/{{cr1Id}}
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "rdqd": "5/5"
+}
+
+### =============================================================
+### PHASE 7: COMMENTAIRES
+### =============================================================
+
+### 7.1 - FD ajoute un commentaire sur le CR1
+# @name addComment1
+POST {{baseUrl}}/cr/{{cr1Id}}/commentaires
+Authorization: Bearer {{fdToken}}
+Content-Type: application/json
+
+{
+  "contenu": "Excellent travail ! Continue ta marche quotidienne avec le Seigneur."
+}
+
+### 7.2 - Fidèle répond avec un commentaire
+# @name addComment2
+POST {{baseUrl}}/cr/{{cr1Id}}/commentaires
+Authorization: Bearer {{fideleToken}}
+Content-Type: application/json
+
+{
+  "contenu": "Merci pour l'encouragement, je vais persévérer !"
+}
+
+### 7.3 - Lister les commentaires du CR1
+# @name listComments
+GET {{baseUrl}}/cr/{{cr1Id}}/commentaires
+Authorization: Bearer {{fideleToken}}
+
+### =============================================================
+### PHASE 8: STATISTIQUES
+### =============================================================
+
+### 8.1 - Statistiques personnelles du fidèle (février 2026)
+# @name personalStatsFidele
+GET {{baseUrl}}/statistics/personal?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fideleToken}}
+
+### 8.2 - Statistiques personnelles du FD
+# @name personalStatsFD
+GET {{baseUrl}}/statistics/personal?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### 8.3 - Statistiques des subordonnés du FD
+# @name subordinatesStatsFD
+GET {{baseUrl}}/subordinates/statistics?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### 8.4 - Résumé des CR des subordonnés
+# @name subordinatesSummary
+GET {{baseUrl}}/subordinates/cr/summary?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fdToken}}
+
+### 8.5 - Statut des disciples
+# @name disciplesStatus
+GET {{baseUrl}}/subordinates/disciples
+Authorization: Bearer {{fdToken}}
+
+### =============================================================
+### PHASE 9: VERIFICATION ACCES PAR ROLE
+### =============================================================
+
+### 9.1 - Erreur: FIDELE tente d'accéder aux regions admin
+### Attendu: 403 Forbidden
+# @name fideleAccessRegions
+GET {{baseUrl}}/admin/regions
+Authorization: Bearer {{fideleToken}}
+
+### 9.2 - Erreur: FIDELE tente d'accéder aux utilisateurs
+### Attendu: 403 Forbidden
+# @name fideleAccessUsers
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{fideleToken}}
+
+### 9.3 - Erreur: FIDELE tente d'accéder aux subordonnés
+### Attendu: 403 Forbidden
+# @name fideleAccessSubordinates
+GET {{baseUrl}}/subordinates/cr?startDate=2026-02-01&endDate=2026-02-28
+Authorization: Bearer {{fideleToken}}
+
+### 9.4 - Erreur: Sans token
+### Attendu: 401 Unauthorized
+# @name noTokenAccess
+GET {{baseUrl}}/cr
+
+### =============================================================
+### FIN DU WORKFLOW COMPLET
+### =============================================================
+### Résumé des actions réalisées:
+### - 4 tokens obtenus (ADMIN, PASTEUR, FD, FIDELE)
+### - Hiérarchie géographique créée (Région > Zone > Église Locale > Église de Maison)
+### - Utilisateurs listés et recherchés
+### - Disciples gérés (assignation, listing)
+### - 3 CR créés (complet, minimal, avec jeûne)
+### - 1 CR dupliqué refusé (409)
+### - Workflow: 3 CR soumis, 2 validés, 1 marqué vu
+### - Re-validation refusée, modification CR validé refusée
+### - 2 commentaires ajoutés et listés
+### - Statistiques personnelles et de groupe vérifiées
+### - Accès par rôle vérifié (403 pour FIDELE sur endpoints admin)

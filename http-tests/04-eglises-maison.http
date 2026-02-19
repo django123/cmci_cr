@@ -1,0 +1,85 @@
+### =============================================
+### CRUD EGLISES DE MAISON
+### Requires: PASTEUR or ADMIN token
+### Prérequis: Avoir créé une église locale (03-eglises-locales.http)
+### =============================================
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Obtenir token ADMIN
+# @name loginAdmin
+POST {{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&username=admin.test@cmci.org&password=test123&scope=openid
+
+###
+
+@token = {{loginAdmin.response.body.access_token}}
+
+### -----------------------------------------------
+### 1. Lister toutes les églises de maison
+### -----------------------------------------------
+# @name getAllEglisesMaison
+GET {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 2. Créer une église de maison
+### (Remplacer egliseLocaleId et leaderId par des IDs valides)
+### -----------------------------------------------
+# @name createEgliseMaison
+POST {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise de Maison Bastos",
+  "egliseLocaleId": "REPLACE_WITH_EGLISE_LOCALE_ID",
+  "adresse": "Quartier Bastos, Yaoundé"
+}
+
+### -----------------------------------------------
+### 3. Obtenir une église de maison par ID
+### -----------------------------------------------
+# @name getEgliseMaisonById
+GET {{baseUrl}}/admin/eglises-maison/{{createEgliseMaison.response.body.id}}
+Authorization: Bearer {{token}}
+
+### -----------------------------------------------
+### 4. Modifier une église de maison (ajouter leader)
+### -----------------------------------------------
+# @name updateEgliseMaison
+PUT {{baseUrl}}/admin/eglises-maison/{{createEgliseMaison.response.body.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise de Maison Bastos Modifiée",
+  "leaderId": "REPLACE_WITH_LEADER_USER_ID",
+  "adresse": "Nouveau Bastos, Yaoundé"
+}
+
+### -----------------------------------------------
+### 5. Créer une deuxième église de maison
+### -----------------------------------------------
+# @name createEgliseMaison2
+POST {{baseUrl}}/admin/eglises-maison
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nom": "Eglise de Maison Mvan",
+  "egliseLocaleId": "REPLACE_WITH_EGLISE_LOCALE_ID",
+  "adresse": "Quartier Mvan, Yaoundé"
+}
+
+### -----------------------------------------------
+### 6. Supprimer une église de maison
+### -----------------------------------------------
+# @name deleteEgliseMaison2
+DELETE {{baseUrl}}/admin/eglises-maison/{{createEgliseMaison2.response.body.id}}
+Authorization: Bearer {{token}}

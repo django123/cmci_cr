@@ -1,0 +1,21 @@
+### Variables globales pour les tests API CMCI CR
+### Utiliser avec VS Code REST Client ou IntelliJ HTTP Client
+
+@baseUrl = http://localhost:8081/api/v1
+@keycloakUrl = http://localhost:8180
+@realm = cmci
+@clientId = cmci-cr-frontend
+
+### Tokens (à remplir après exécution de 00-auth.http)
+@adminToken = {{$dotenv ADMIN_TOKEN}}
+@pasteurToken = {{$dotenv PASTEUR_TOKEN}}
+@fdToken = {{$dotenv FD_TOKEN}}
+@fideleToken = {{$dotenv FIDELE_TOKEN}}
+
+### IDs dynamiques (à remplir au fur et à mesure des tests)
+@regionId = {{$dotenv REGION_ID}}
+@zoneId = {{$dotenv ZONE_ID}}
+@egliseLocaleId = {{$dotenv EGLISE_LOCALE_ID}}
+@egliseMaisonId = {{$dotenv EGLISE_MAISON_ID}}
+@crId = {{$dotenv CR_ID}}
+@userId = {{$dotenv USER_ID}}
