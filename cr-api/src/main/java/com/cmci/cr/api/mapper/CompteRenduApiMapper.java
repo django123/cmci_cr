@@ -50,7 +50,7 @@ public class CompteRenduApiMapper {
     /**
      * Convertit UpdateCompteRenduRequest en UpdateCRCommand
      */
-    public UpdateCRCommand toUpdateCommand(UUID compteRenduId, UpdateCompteRenduRequest request) {
+    public UpdateCRCommand toUpdateCommand(UUID compteRenduId, UpdateCompteRenduRequest request, UUID utilisateurId) {
         // Convertir la durée de prière en format HH:mm
         String priereSeule = convertMinutesToTimeString(request.getPriereSeuleMinutes());
         String priereCouple = convertMinutesToTimeString(request.getPriereCoupleMinutes());
@@ -58,7 +58,7 @@ public class CompteRenduApiMapper {
 
         return UpdateCRCommand.builder()
                 .id(compteRenduId)
-                .utilisateurId(null) // Sera défini par le controller
+                .utilisateurId(utilisateurId)
                 .rdqd(request.getRdqd())
                 .priereSeule(priereSeule)
                 .priereCouple(priereCouple)

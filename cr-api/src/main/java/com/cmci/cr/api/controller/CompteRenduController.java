@@ -88,9 +88,12 @@ public class CompteRenduController {
             @Parameter(description = "ID du compte rendu") @PathVariable UUID id,
             @Valid @RequestBody UpdateCompteRenduRequest request) {
 
-        log.info("Updating CR {}", id);
+        UUID utilisateurId = securityContextService.getCurrentUserId()
+                .orElseThrow(() -> new IllegalStateException("Utilisateur non authentifié"));
 
-        UpdateCRCommand command = mapper.toUpdateCommand(id, request);
+        log.info("Updating CR {} by user {}", id, utilisateurId);
+
+        UpdateCRCommand command = mapper.toUpdateCommand(id, request, utilisateurId);
         CRResponse response = updateCRUseCase.execute(command);
         CompteRenduResponse apiResponse = mapper.toApiResponse(response);
 

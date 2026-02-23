@@ -1,0 +1,80 @@
+# =============================================================================
+# Configuration pour les tests d'intégration API complets (A-Z)
+# Profile: integration-test
+# - PostgreSQL réel via Testcontainers (URL surchargée par @DynamicPropertySource)
+# - Redis remplacé par ConcurrentMapCacheManager (in-memory)
+# - Kafka remplacé par @MockBean KafkaEventPublisher
+# - Keycloak JWT remplacé par @MockBean JwtDecoder
+# =============================================================================
+
+spring:
+  # Redis et Kafka autoconfiguration désactivés (remplacés dans les tests)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+  # Datasource PostgreSQL: URL surchargée par @DynamicPropertySource (Testcontainers)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    # url/username/password seront surchargés par @DynamicPropertySource
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  # Flyway ACTIVÉ pour créer le schéma réel PostgreSQL
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  # Redis: port fictif (lazy connection, remplacé par ConcurrentMapCacheManager)
+  data:
+    redis:
+      host: localhost
+      port: 6370
+
+  # JWT: issuer fictif (JwtDecoder sera @MockBean dans le test)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9999/test-issuer
+
+  # Kafka: brokers fictifs (KafkaEventPublisher sera @MockBean dans le test)
+  kafka:
+    bootstrap-servers: localhost:29092
+
+# Keycloak Admin: configuration fictive (pas de vraie connexion Keycloak)
+keycloak:
+  admin:
+    server-url: http://localhost:9999/fake-keycloak
+    realm: test
+    username: admin
+    password: admin
+
+# Server: même context-path que la prod
+server:
+  servlet:
+    context-path: /api
+
+# Swagger désactivé en test d'intégration
+springdoc:
+  swagger-ui:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.cmci.cr: DEBUG
+    org.springframework.test: INFO
+    org.testcontainers: INFO
+    org.hibernate.SQL: DEBUG
+    org.flywaydb: INFO

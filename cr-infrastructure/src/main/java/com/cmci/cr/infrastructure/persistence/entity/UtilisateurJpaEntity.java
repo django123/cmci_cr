@@ -3,6 +3,8 @@ package com.cmci.cr.infrastructure.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +38,8 @@ public class UtilisateurJpaEntity {
     private String prenom;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 20)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "role", nullable = false, columnDefinition = "role_enum")
     private RoleEnum role;
 
     @Column(name = "eglise_maison_id")
@@ -58,7 +61,8 @@ public class UtilisateurJpaEntity {
     private LocalDate dateBapteme;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut", nullable = false, length = 20)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "statut", nullable = false, columnDefinition = "statut_utilisateur_enum")
     private StatutUtilisateurEnum statut;
 
     @Column(name = "created_at", nullable = false, updatable = false)
